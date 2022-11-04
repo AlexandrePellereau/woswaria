@@ -1,0 +1,8 @@
+name: UHC
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.uhc.core.Main
+commands:
+  role:
+    description: This command says your role.
+    permission: role.use

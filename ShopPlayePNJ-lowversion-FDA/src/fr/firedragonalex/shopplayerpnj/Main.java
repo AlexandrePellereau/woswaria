@@ -1,0 +1,274 @@
+package fr.firedragonalex.shopplayerpnj;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
+
+import fr.firedragonalex.shopplayerpnj.commands.CommandGiveSkinVillagerShop;
+import fr.firedragonalex.shopplayerpnj.commands.Commands;
+import fr.firedragonalex.shopplayerpnj.commands.TabCompletionSkinVillagerShop;
+import fr.firedragonalex.shopplayerpnj.gui.Gui;
+import fr.firedragonalex.shopplayerpnj.gui.ListenersGUI;
+
+import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+
+public class Main extends JavaPlugin {
+	
+	private List<VillagerShop> listVillagersShop;
+	private List<VillagerShop> listVillagersShopInactive;
+	private Gui gui;
+	private UseCsvFiles useCsvFiles;
+	private List<List> tempVariables;
+	private long expirationTime;
+	
+	@Override
+	public void onEnable() {
+		saveDefaultConfig();
+		
+		this.expirationTime = 1000*60*60*24*365;
+		this.listVillagersShop = new ArrayList<VillagerShop>();
+		this.listVillagersShopInactive = new ArrayList<VillagerShop>();
+		this.tempVariables = new ArrayList<List>();
+		this.useCsvFiles = new UseCsvFiles();
+		this.gui = new Gui(this);
+		
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new Listeners(this), this);
+		pm.registerEvents(new ListenersGUI(this), this);
+		getCommand("giveskinvillagershop").setExecutor(new CommandGiveSkinVillagerShop());
+		getCommand("giveskinvillagershop").setTabCompleter(new TabCompletionSkinVillagerShop());
+		getCommand("givevillagershop").setExecutor(new Commands());
+		getCommand("givevillagershopinfinitetrade").setExecutor(new Commands());
+		getCommand("givevillagershopkiller").setExecutor(new Commands());
+		
+		this.loadVillagerShop();
+		
+		System.out.println("[ShopPlayerPNJ-FDA] Enabled !");
+	}
+	
+	
+	public List<VillagerShop> getListVillagersShop() {
+		return this.listVillagersShop;
+	}
+	
+	public List<VillagerShop> getListVillagersShopInactive() {
+		return this.listVillagersShopInactive;
+	}
+	
+	public Gui getGui() {
+		return this.gui;
+	}
+	
+	public UseCsvFiles getUseCsvFiles() {
+		return this.useCsvFiles;
+	}
+	
+	public List<List> getTempVariables() {
+		return this.tempVariables;
+	}
+	
+	public long getExpirationTime() {
+		return this.expirationTime;
+	}
+	
+	public boolean removeInventory(Inventory inventory, Material type, int nb) {
+		int nbMissing = nb;
+		for (ItemStack itemStack : inventory.getContents()) {
+			if (itemStack!=null) {
+				if (itemStack.getType()==type) {
+					if (itemStack.getAmount()>=nbMissing) {
+						itemStack.setAmount(itemStack.getAmount()-nb);
+						return true;
+					}else {
+						nbMissing-=itemStack.getAmount();
+						itemStack.setAmount(0);
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public void addTrade(Villager villager, ItemStack inputTrade, ItemStack inputTrade2, ItemStack outputTrade) {
+		List<MerchantRecipe> tempListOfRecipes = new ArrayList<MerchantRecipe>();
+		for (MerchantRecipe recipe : villager.getRecipes()) {
+			tempListOfRecipes.add(recipe);
+		}
+		MerchantRecipe newTrade = new MerchantRecipe(outputTrade.clone(),0);
+		newTrade.addIngredient(inputTrade.clone());
+		if (inputTrade2 != null) {
+			newTrade.addIngredient(inputTrade2.clone());
+		}
+		newTrade.setExperienceReward(false);
+		tempListOfRecipes.add(newTrade);
+		villager.setRecipes(tempListOfRecipes);
+	}
+	
+	public void saveVillagerShop() {
+		System.out.println("[ShopPlayerPNJ-FDA] Try to save all VillagerShop...");
+		
+		List<List<String>> listOfLines = new ArrayList<List<String>>();
+		List<String> line = new ArrayList<String>();
+		
+		line.add("UUIDVillagerShop");
+		line.add("UUIDOwner");
+		line.add("NameVillagerShop");
+		line.add("NameWorld");
+		line.add("X(Location)");
+		line.add("Y(Location)");
+		line.add("Z(Location)");
+		line.add("X(LocationDirection)");
+		line.add("Z(LocationDirection)");
+		line.add("IDInventoryThingsObtained");
+		line.add("IDInventoryThingsToSell");
+		line.add("Skin");
+		line.add("HasInfiniteTrade");
+		listOfLines.add(line);
+		
+		for (VillagerShop villagerShop : this.getListVillagersShop()) {
+			
+			line = new ArrayList<String>();
+			line.add(villagerShop.getVillager().getUniqueId()+"");
+			line.add(villagerShop.getOwner()+"");
+			line.add(villagerShop.getName()+"");
+			line.add(villagerShop.getVillager().getWorld().getUID()+"");
+			line.add(villagerShop.getVillager().getLocation().getChunk().getX()+"");
+			line.add(villagerShop.getVillager().getLocation().getChunk().getZ()+"");
+			line.add(villagerShop.getVillager().getUniqueId()+"1");
+			line.add(villagerShop.getVillager().getUniqueId()+"2");
+			line.add(villagerShop.hasInfiniteTrade()+"");
+			listOfLines.add(line);
+		}
+		this.getUseCsvFiles().save("villagershop", listOfLines, "plugins/ShopPlayerPNJ-FDA/saves/");
+		System.out.println("[ShopPlayerPNJ-FDA] All VillagerShop save successfully !");
+	}
+	
+	public void saveInventoriesVillagerShop() {
+		System.out.println("[ShopPlayerPNJ-FDA] Try to save all InventoriesVillagerShop...");
+		File saveInventory = new File("plugins/ShopPlayerPNJ-FDA/saves/" +"saveItemstacks"+ ".yml");
+		FileConfiguration saveInventoryConfig = new YamlConfiguration();
+		if (saveInventory.exists()) {
+			saveInventory.delete();
+		}
+        try {
+			saveInventory.createNewFile();
+		} catch (Exception e) {}
+		
+		int i;
+		for (VillagerShop villagerShop : this.getListVillagersShop()) {
+			i = 0;
+			for (ItemStack itemstack : villagerShop.getInventoryThingsObtained().getContents()) {
+				if (itemstack!=null) {
+					saveInventoryConfig.set(villagerShop.getVillager().getUniqueId()+"1"+"."+i, itemstack);
+					i++;
+				}
+			}
+			i = 0;
+			for (ItemStack itemstack : villagerShop.getInventoryThingsToSell().getContents()) {
+				if (itemstack!=null) {
+					saveInventoryConfig.set(villagerShop.getVillager().getUniqueId()+"2"+"."+i, itemstack);
+					i++;
+				}
+			}
+		}
+        try {
+        	saveInventoryConfig.save(saveInventory);
+		} catch (Exception e) {}
+        
+		System.out.println("[ShopPlayerPNJ-FDA] All InventoriesVillagerShop save successfully !");
+	}
+	
+	public void loadVillagerShop() {
+		System.out.println("[ShopPlayerPNJ-FDA] Try to load all VillagerShop...");
+		List<List<String>> listOfLines = this.getUseCsvFiles().load("villagershop",  "plugins/ShopPlayerPNJ-FDA/saves/");
+		if (listOfLines==null) {
+			return;
+		}
+		for (List<String> line : listOfLines) {
+			
+			UUID uuidVillagerShop = UUID.fromString(line.get(0));
+			UUID owner = UUID.fromString(line.get(1));
+			String nameVillagerShop = line.get(2);
+			World world = Bukkit.getWorld(UUID.fromString(line.get(3)));
+			Chunk chunk = world.getChunkAt(Integer.valueOf(line.get(4)),Integer.valueOf(line.get(5)));
+			String uuidInventoryThingsObtained = line.get(6);
+			String uuidInventoryThingsToSell = line.get(7);
+			boolean hasInfiniteTrade = Boolean.valueOf(line.get(8));
+
+			Villager villager = (Villager)Bukkit.getEntity(uuidVillagerShop);
+			if (villager == null) {
+				for(Entity entity : chunk.getEntities()) {
+					if (entity.getUniqueId().equals(uuidVillagerShop)) {
+						villager = (Villager)entity;
+					}
+				}
+			}
+			if (villager != null) {
+				VillagerShop villagerShop = new VillagerShop(owner, nameVillagerShop, villager, this, hasInfiniteTrade);
+
+				this.getListVillagersShop().add(villagerShop);
+				
+				
+				Inventory inventoryThingsObtained = Bukkit.createInventory(null, 3*9);
+				Inventory inventoryThingsToSell = Bukkit.createInventory(null, 3*9);
+				
+				File saveInventory = new File("plugins/ShopPlayerPNJ-FDA/saves/" +"saveItemstacks"+ ".yml");///////////////////////////////////////////////////////////////
+				FileConfiguration saveInventoryConfig = YamlConfiguration.loadConfiguration(saveInventory);
+				boolean hasFinish = false;
+				int i = 0;
+				while (!hasFinish) {
+					try {
+						inventoryThingsObtained.addItem(saveInventoryConfig.getItemStack(uuidInventoryThingsObtained+"."+i));
+						i++;
+					} catch (Exception e) {
+						hasFinish = true;
+					}
+				}
+				hasFinish = false;
+				i = 0;
+				while (!hasFinish) {
+					try {
+						inventoryThingsToSell.addItem(saveInventoryConfig.getItemStack(uuidInventoryThingsToSell+"."+i));
+						i++;
+					} catch (Exception e) {
+						hasFinish = true;
+					}
+				}
+				
+				villagerShop.setInventoryThingsObtained(inventoryThingsObtained);
+				villagerShop.setInventoryThingsToSell(inventoryThingsToSell);
+				
+			} else {
+				System.out.println("[ERROR] Villager not found !");
+			}
+		}
+		System.out.println("[ShopPlayerPNJ-FDA] All VillagerShop load successfully !");
+	}
+	
+	@Override
+	public void onDisable() {
+		this.saveInventoriesVillagerShop();
+		this.saveVillagerShop();
+		System.out.println("[ShopPlayerPNJ-FDA] Disabled !");
+	}
+}

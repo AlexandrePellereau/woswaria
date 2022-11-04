@@ -1,0 +1,70 @@
+package fr.firedragonalex.rankandlevels;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+
+public class Gui {
+	
+	public static void GuiLevelRewards(Player player,int number,Rank rank) {
+		int page = Math.floorDiv(number, 7);
+		
+		List<Rank> listOfRanks = Arrays.asList(Rank.values());
+		int rankNumber = Math.floorDiv(listOfRanks.indexOf(rank), 2);
+		
+		Inventory gui = Bukkit.createInventory(null, 5*9, "§1LevelRewards;page:"+String.valueOf(page)+";rank:"+rankNumber);
+		
+		for (int i = 0; i < 5*9; i++) {
+			gui.setItem(i,Main.customItem(Material.BLACK_STAINED_GLASS_PANE, "§"));
+		}
+		
+		if (page != 0) {
+			gui.setItem(9*2,Main.customHead("Précédent","MHF_ArrowLeft"));
+		}
+		gui.setItem(9*3-1,Main.customHead("Suivant","MHF_ArrowRight"));
+		if (rankNumber != 0) {
+			gui.setItem(9*4+4,Main.customHead("Grade moins haut","MHF_ArrowDown"));
+		}
+		if (rankNumber != Math.floorDiv(Rank.values().length, 2)) {
+			gui.setItem(4,Main.customHead("Grade plus haut","MHF_ArrowUp"));
+		}
+		
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 2; j++) {
+				rank = Rank.values()[rankNumber+j];
+				ItemStack item = null;
+				number = page*7+i+1;
+				if (Main.getCustomRewards().containsKey(number) && Main.getCustomRewards().get(number).containsKey(rank)) {
+					item = Main.getCustomRewards().get(number).get(rank);
+				} else {
+					if (!(number % 3 == 0)) {
+						item = Main.customItem(Material.GOLD_NUGGET, "Niveau "+number+" (Normal,"+rank.getName()+")");
+					}
+					else if (!(number % 6 == 0)) {
+						item = Main.customItem(Material.GOLD_INGOT, "Niveau "+number+" (Rare,"+rank.getName()+")");
+					}
+					else if (!(number % 12 == 0)) {
+						item = Main.customItem(Material.GOLD_BLOCK, "Niveau "+number+" (Très rare,"+rank.getName()+")");
+					}
+					else if (!(number % 36 == 0)) {
+						item = Main.customItem(Material.AMETHYST_SHARD, "Niveau "+number+" (Epique,"+rank.getName()+")");
+					} 
+					else {
+						item = Main.customItem(Material.END_CRYSTAL, "Niveau "+number+" (Légendaire,"+rank.getName()+")");
+					}
+				}
+				gui.setItem(i+28-j*18,item);
+			}
+		}
+		
+		player.openInventory(gui);
+	}
+
+}

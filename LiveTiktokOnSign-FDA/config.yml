@@ -1,0 +1,20 @@
+LAST_LIKE:
+  line1: ""
+  line2: "Last like :"
+  line3: "LAST_LIKE"
+  line4: ""
+LAST_FOLLOW:
+  line1: ""
+  line2: "Last follow :"
+  line3: "LAST_FOLLOW"
+  line4: ""
+LAST_COMMENT:
+  line1: ""
+  line2: "Last comment :"
+  line3: "LAST_COMMENT"
+  line4: ""
+LAST_DONATION:
+  line1: ""
+  line2: "Last donation :"
+  line3: "LAST_DONATION"
+  line4: ""

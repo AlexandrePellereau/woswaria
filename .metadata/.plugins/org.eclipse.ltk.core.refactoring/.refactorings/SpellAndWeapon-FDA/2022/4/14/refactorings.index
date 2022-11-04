@@ -1,0 +1,17 @@
+1649370561036	Rename type 'QuestStep'
+1649370613255	Rename type 'QuestStep'
+1649370631716	Rename type 'QuestStepEvents'
+1649370641315	Rename type 'AbstractsQuestStepEvents'
+1649370683029	Rename package 'fr.firedragonalex.spellandweapon.quests.step'
+1649370760911	Move compilation unit
+1649370763855	Move compilation unit
+1649370766883	Move compilation unit
+1649370794624	Move compilation units
+1649370921159	Rename type 'AbstractQuestStepEvents'
+1649370938186	Rename type 'AbstractQuestStepNormal'
+1649371958039	Move compilation unit
+1649371964988	Move compilation units
+1649372055465	Copy compilation unit
+1649429444524	Rename type 'EveryTicks'
+1649429592972	Rename type 'EveryTicksWoswaria'
+1649609427834	Delete element

@@ -1,0 +1,82 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import org.bukkit.Location;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.spellandweapon.Main;
+import fr.firedragonalex.spellandweapon.element.Element;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStepKillMonster;
+
+public class CustomMonster extends CustomEntity{
+	
+	private CustomMonsterType customMonsterType;
+	
+	public CustomMonster(CustomMonsterType customMonsterType,int level, Location location, Main main) {
+		super(main,(LivingEntity)location.getWorld().spawnEntity(location, customMonsterType.getEntityType()),level,
+				Math.round(level*Math.round(customMonsterType.getAttack()/(double)10)+customMonsterType.getAttack()),
+				Math.round(level*Math.round(customMonsterType.getRegeneration()/(double)10)+customMonsterType.getRegeneration()),
+				Math.round(level*Math.round(customMonsterType.getMaxHealth()/(double)10)+customMonsterType.getMaxHealth()));
+		this.customMonsterType = customMonsterType;
+		this.listElementsImmune = customMonsterType.getListElementsImmune();
+		this.updateCustomHealthBar();
+		this.getEntity().setCustomNameVisible(true);
+	}
+	
+	public int getXpDrop() {
+		return this.getLevel()*this.getCustomMonsterType().getXpGiven();
+	}
+	
+	public CustomMonsterType getCustomMonsterType() {
+		return this.customMonsterType;
+	}
+	
+	@Override
+	public void updateCustomHealthBar() {
+		String stringToBePrint = this.level+" | "+this.customMonsterType.getName()+" | "+this.health+"§c❤";
+		//String constantPrint = " .:-=+*#%@";
+		String constantPrint = "0123456789+";
+		if(this.getListElements().size() > 0) {
+			stringToBePrint += "§f | ";
+			for (Element element : this.listElements) {
+				
+				int index = Math.floorDiv(element.getPower(), 20);
+				if (index > constantPrint.length()-1) {
+					index = constantPrint.length()-1;
+				}
+				if (index <= 0) index = 0;
+				stringToBePrint += element.getType().getColor() + constantPrint.charAt(index);
+			}
+		}
+		this.getEntity().setCustomName(stringToBePrint);
+	}
+
+	@Override
+	public void death(){
+		if (this.killer instanceof Player) {
+			CustomPlayer customPlayer = Main.getCustomPlayerByPlayer((Player)this.killer);
+			if (customPlayer != null) {
+				if (customPlayer.getCurrentQuest().getStep() instanceof QuestStepKillMonster) {
+					QuestStepKillMonster step = (QuestStepKillMonster)customPlayer.getCurrentQuest().getStep();
+					if (step.getTypeOfMonsterToKill() == this.customMonsterType) {
+						step.killMonster();
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public void setHealth(int health) {
+		if (health >= this.maxHealth) {
+			health = this.maxHealth;
+		}
+		this.health = health;
+		if (health <= 0) {
+			this.health = 0;
+			this.kill();
+		}
+		this.getEntity().setHealth(this.health);
+		this.updateCustomHealthBar();
+	}
+}

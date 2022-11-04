@@ -1,0 +1,24 @@
+name: RankAndLevels-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.rankandlevels.Main
+api-version: 1.17
+depend: [SpellAndWeapon-FDA,Cities-FDA]
+commands:
+  levelrewards:
+    description: This command open a gui where you can earn rewards.
+    permission: levelrewards.use
+    usage: /levelrewards without arguments
+  feed:
+    description: This command set your food level to max level and give you saturation.
+    permission: feed.use
+    usage: /feed without arguments
+  craft:
+    description: This command open the gui of the crafting table.
+    permission: craft.use
+    usage: /craft without arguments
+  enderchest:
+    description: This command open your enderchest.
+    permission: craft.use
+    aliases: ec
+    usage: /enderchest or /ec without arguments

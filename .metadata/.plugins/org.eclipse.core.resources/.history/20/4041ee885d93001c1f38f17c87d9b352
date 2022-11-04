@@ -1,0 +1,22 @@
+package fr.firedragonalex.spellandweapon.commands;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
+
+import fr.firedragonalex.spellandweapon.custom.CustomWeapon;
+
+public class TabCompleterCommandGiveWeapon implements TabCompleter{
+	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String arg2, String[] arg3) {
+		List<String> listStringCustomWeapon = new ArrayList<String>();
+		for (CustomWeapon customWeapon : CustomWeapon.values()) {
+			listStringCustomWeapon.add(customWeapon+"");
+		}
+		return listStringCustomWeapon;
+	}
+}

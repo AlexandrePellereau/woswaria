@@ -1,0 +1,11 @@
+everyone_can_do_this_command:
+  giveskinvillagershop: False
+  givevillagershop: True
+  givevillagershopinfinitetrade: False
+give_villagershopegg_when_you_kill_a_villagershop: True
+percentage_of_getting_a_villagershopegg_when_someone_kill_a_villager: 10
+percentage_of_getting_a_villagershop_skin_when_someone_kill_a_villager: 1
+
+#if you don't want a limit, set min to 0 and max to a big number (like 500)
+min_name_of_villagershop: 3
+max_name_of_villagershop: 20

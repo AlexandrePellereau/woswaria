@@ -1,0 +1,53 @@
+package fr.firedragonalex.rankandlevels;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+import fr.firedragonalex.spellandweapon.alexlibrairy.UseCsvFiles;
+
+public class SaveAndLoad {
+	
+	public static void loadPlayer(Player player) {
+		List<List<String>> allLines = UseCsvFiles.load("", "");
+		for (List<String> line : allLines) {
+			UUID uuid = UUID.fromString(line.get(0));
+			if (uuid.equals(player.getUniqueId())) {
+				Rank rank = Rank.valueOf(line.get(1));
+				long timesampExpirationDate = Long.valueOf(line.get(2));
+				if (System.currentTimeMillis()*0.001 > timesampExpirationDate) {
+					Main.setRank(player, rank);
+				} else {
+					player.sendMessage(ChatColor.RED+"GRADE "+rank.getColor()+rank.getName()+" EXPIRÉ !");
+				}
+				return;
+			}
+		}
+		Main.setRank(player, Rank.HABITANT);
+	}
+	
+	public static void loadAllPlayers() {
+//		boolean dontFindInLoad = true;
+//		if (dontFindInLoad) {
+//			Main.setRank(player, Rank.HABITANT);
+//		}
+	}
+	
+	public static void savePlayer(Player player) {
+		boolean dontFindInLoad = true;
+		if (dontFindInLoad) {
+			Main.setRank(player, Rank.HABITANT);
+		}
+	}
+	
+	public static void saveAllPlayers() {
+//		boolean dontFindInLoad = true;
+//		if (dontFindInLoad) {
+//			Main.setRank(player, Rank.HABITANT);
+//		}
+	}
+
+}

@@ -1,0 +1,349 @@
+package fr.firedragonalex.areaplugin;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import fr.firedragonalex.areaplugin.area.Area;
+import fr.firedragonalex.areaplugin.commands.CommandAreaSellRewards;
+import fr.firedragonalex.areaplugin.commands.CommandAreaSettings;
+import fr.firedragonalex.areaplugin.commands.CommandGiveAreaSelectors;
+import fr.firedragonalex.areaplugin.farmarea.FarmArea;
+import fr.firedragonalex.areaplugin.farmarea.MinableBlock;
+import fr.firedragonalex.areaplugin.farmarea.MultipleMinableBlock;
+import fr.firedragonalex.areaplugin.gui.Gui;
+import fr.firedragonalex.areaplugin.gui.ListenersGUI;
+import fr.firedragonalex.areaplugin.listeners.ListenerSelection;
+import fr.firedragonalex.areaplugin.listeners.Listeners;
+import fr.firedragonalex.areaplugin.listeners.ListenersArea;
+import fr.firedragonalex.areaplugin.saveandload.SaveAndLoadAreas;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class MainAreaPlugin extends JavaPlugin {
+	
+	private static MainAreaPlugin mainAreaPlugin = null;
+	private List<Area> allAreas;
+	private List<Selection> allSelections;
+	private boolean isWildernessUnbreakable;
+	private boolean playerCanPlaceTnt;
+	private boolean playerCanPlaceMinecartWithTnt;
+	private boolean playerCanPlaceEndCrystal;
+	private String defaultNameArea;
+	private List<List> tempVariables;
+	private List<Material> materialChests;
+	private List<Material> materialDoors;
+	private List<Material> materialRedstone;
+	private Gui gui;
+	private HashMap<String, Inventory> signLocationToPrice;
+	private HashMap<UUID, List<ItemStack>> notEarnItemStacks;
+	
+	@Override
+	public void onEnable() {
+		
+		MainAreaPlugin.mainAreaPlugin = this;
+		
+		saveDefaultConfig();
+		//////////////////////////////////////////////////////////////////////////
+		this.isWildernessUnbreakable = this.getConfig().getBoolean("everywhere.wilderness_is_unbreakable");
+		this.playerCanPlaceTnt = this.getConfig().getBoolean("everywhere.player_can_place.tnt");
+		this.playerCanPlaceMinecartWithTnt = this.getConfig().getBoolean("everywhere.player_can_place.minecart_with_tnt");
+		this.playerCanPlaceEndCrystal = this.getConfig().getBoolean("everywhere.player_can_place.end_crystal");
+		this.defaultNameArea = this.getConfig().getString("default_settings.name_area");
+		/////////////////////////////////////////////////////////////////////////
+		
+		this.signLocationToPrice = new HashMap<>();
+		this.notEarnItemStacks = new HashMap<>();
+		
+		this.allSelections = new ArrayList<Selection>();
+		this.allAreas = new ArrayList<Area>();
+		this.tempVariables = new ArrayList<List>();//[player,nameOfVar,valueOfTheVar]
+		this.materialChests = new ArrayList<Material>();
+		this.materialDoors = new ArrayList<Material>();
+		this.materialRedstone = new ArrayList<Material>();
+		this.gui = new Gui(this);
+		
+		this.materialChests.add(Material.CHEST);
+		this.materialChests.add(Material.FURNACE);
+		this.materialChests.add(Material.BLAST_FURNACE);
+		this.materialChests.add(Material.DISPENSER);
+		this.materialChests.add(Material.DROPPER);
+		this.materialChests.add(Material.SHULKER_BOX);
+		this.materialChests.add(Material.BLACK_SHULKER_BOX);
+		this.materialChests.add(Material.BLUE_SHULKER_BOX);
+		this.materialChests.add(Material.BROWN_SHULKER_BOX);
+		this.materialChests.add(Material.CYAN_SHULKER_BOX);
+		this.materialChests.add(Material.GRAY_SHULKER_BOX);
+		this.materialChests.add(Material.GREEN_SHULKER_BOX);
+		this.materialChests.add(Material.LIGHT_BLUE_SHULKER_BOX);
+		this.materialChests.add(Material.LIGHT_GRAY_SHULKER_BOX);
+		this.materialChests.add(Material.LIME_SHULKER_BOX);
+		this.materialChests.add(Material.MAGENTA_SHULKER_BOX);
+		this.materialChests.add(Material.ORANGE_SHULKER_BOX);
+		this.materialChests.add(Material.PINK_SHULKER_BOX);
+		this.materialChests.add(Material.PURPLE_SHULKER_BOX);
+		this.materialChests.add(Material.RED_SHULKER_BOX);
+		this.materialChests.add(Material.WHITE_SHULKER_BOX);
+		this.materialChests.add(Material.YELLOW_SHULKER_BOX);
+		
+		this.materialDoors.add(Material.ACACIA_DOOR);
+		this.materialDoors.add(Material.ACACIA_TRAPDOOR);
+		this.materialDoors.add(Material.BIRCH_DOOR);
+		this.materialDoors.add(Material.BIRCH_TRAPDOOR);
+		this.materialDoors.add(Material.CRIMSON_DOOR);
+		this.materialDoors.add(Material.CRIMSON_TRAPDOOR);
+		this.materialDoors.add(Material.DARK_OAK_DOOR);
+		this.materialDoors.add(Material.DARK_OAK_TRAPDOOR);
+		this.materialDoors.add(Material.JUNGLE_DOOR);
+		this.materialDoors.add(Material.JUNGLE_TRAPDOOR);
+		this.materialDoors.add(Material.OAK_DOOR);
+		this.materialDoors.add(Material.OAK_TRAPDOOR);
+		this.materialDoors.add(Material.SPRUCE_DOOR);
+		this.materialDoors.add(Material.SPRUCE_TRAPDOOR);
+		this.materialDoors.add(Material.WARPED_DOOR);
+		this.materialDoors.add(Material.WARPED_TRAPDOOR);
+		
+		this.materialRedstone.add(Material.ACACIA_BUTTON);
+		this.materialRedstone.add(Material.BIRCH_BUTTON);
+		this.materialRedstone.add(Material.CRIMSON_BUTTON);
+		this.materialRedstone.add(Material.DARK_OAK_BUTTON);
+		this.materialRedstone.add(Material.JUNGLE_BUTTON);
+		this.materialRedstone.add(Material.OAK_BUTTON);
+		this.materialRedstone.add(Material.POLISHED_BLACKSTONE_BUTTON);
+		this.materialRedstone.add(Material.SPRUCE_BUTTON);
+		this.materialRedstone.add(Material.STONE_BUTTON);
+		this.materialRedstone.add(Material.WARPED_BUTTON);
+		this.materialRedstone.add(Material.LEVER);
+		this.materialRedstone.add(Material.TRAPPED_CHEST);
+
+		getCommand("areasettings").setExecutor(new CommandAreaSettings(this));
+		getCommand("giveareaselector").setExecutor(new CommandGiveAreaSelectors(this));
+		getCommand("giveareaselector+").setExecutor(new CommandGiveAreaSelectors(this));
+		getCommand("areasellrewards").setExecutor(new CommandAreaSellRewards(this));
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new Listeners(this), this);
+		pm.registerEvents(new ListenersArea(this), this);
+		pm.registerEvents(new ListenersGUI(this), this);
+		pm.registerEvents(new ListenerSelection(this), this);
+		
+		SaveAndLoadAreas saveAndLoadAreas = new SaveAndLoadAreas();
+		saveAndLoadAreas.loadAllAreas();
+		
+		System.out.println("[AreaPlugin-FDA] "+this.getAllAreas().size()+" areas loaded !");
+		
+		saveAndLoadAreas.loadFarmAreas();
+		saveAndLoadAreas.loadSellSign();
+		saveAndLoadAreas.loadItemstacksToEarn();
+		
+		System.out.println("[AreaPlugin-FDA] Enabled !");
+	}
+	
+	public static MainAreaPlugin getThis() {
+		return MainAreaPlugin.mainAreaPlugin;
+	}
+	
+	public HashMap<UUID, List<ItemStack>> getNotEarnItemStacks() {
+		return this.notEarnItemStacks;
+	}
+	
+	public void addItemToEarn(UUID uuid,List<ItemStack> itemstacksToAdd) {
+		if (this.notEarnItemStacks.containsKey(uuid)) {
+			this.notEarnItemStacks.get(uuid).addAll(itemstacksToAdd);
+		} else {
+			this.notEarnItemStacks.put(uuid, itemstacksToAdd);
+		}
+	}
+	
+	public Area getAreaByUUID(UUID uuid) {
+		for (Area area : this.getAllAreas()) {
+			if (area.getUUID().equals(uuid)) {
+				return area;
+			}
+		}
+		return null;
+	}
+	
+	public Gui getGui() {
+		return this.gui;
+	}
+	
+	public void removeAllTempVariablesToThisPlayer(Player player) {
+		List<List> tempVariablesToRemove = new ArrayList<>();
+		for (List tempVar : this.getTempVariables()) {
+			Player tempVarPlayer = (Player)tempVar.get(0);
+			if (player.getUniqueId().equals(tempVarPlayer.getUniqueId())) {
+				tempVariablesToRemove.add(tempVar);
+			}
+		}
+		this.getTempVariables().removeAll(tempVariablesToRemove);
+	}
+	
+	public  HashMap<String, Inventory> getSignLocationToPrice() {
+		return this.signLocationToPrice;
+	}
+	
+	public ItemStack customItem(Material itemType, String name) {
+		ItemStack item = new ItemStack(itemType,1);
+		ItemMeta itemMeta = item.getItemMeta();
+		itemMeta.setDisplayName(name);
+		item.setItemMeta(itemMeta);
+		return item;
+	}
+	
+	public double removeInventory(Material type, int amount, Inventory inventory) {
+		int amountToRemove = amount;
+		for (ItemStack itemStack : inventory.getStorageContents()) {
+			if (itemStack != null) {
+				if (itemStack.getType() == type) {
+					if (itemStack.getAmount() >= amountToRemove) {
+						itemStack.setAmount(itemStack.getAmount() - amountToRemove);
+						return 0;
+					} else {
+						amountToRemove-=itemStack.getAmount();
+						itemStack.setAmount(0);
+					}
+				}
+			}
+		}
+		return (amountToRemove*1.0)/amount;
+		
+	}
+	
+	public double removeInventory(ItemStack item, int amount, Inventory inventory) {
+		int amountToRemove = amount;
+		for (ItemStack itemStack : inventory.getStorageContents()) {
+			if (itemStack != null) {
+				if (itemStack.isSimilar(item)) {
+					if (itemStack.getAmount() >= amountToRemove) {
+						itemStack.setAmount(itemStack.getAmount() - amountToRemove);
+						return 0;
+					} else {
+						amountToRemove-=itemStack.getAmount();
+						itemStack.setAmount(0);
+					}
+				}
+			}
+		}
+		return (amountToRemove*1.0)/amount;
+		
+	}
+	
+	public static void giveOrDrop(ItemStack itemStack, Player player) {
+		int initialAmount = MainAreaPlugin.inventoryTotalAmount(player.getInventory());
+		player.getInventory().addItem(itemStack);
+		int afterGiveAmount = MainAreaPlugin.inventoryTotalAmount(player.getInventory());
+		if (afterGiveAmount - initialAmount < itemStack.getAmount()) {
+			itemStack.setAmount(afterGiveAmount - initialAmount);
+			player.getWorld().dropItem(player.getLocation(), itemStack);
+		}
+	}
+	
+	public static ItemStack giveOrReturn(ItemStack itemStack, Player player) {
+		if (itemStack == null) return null;
+		int initialAmount = MainAreaPlugin.inventoryTotalAmount(player.getInventory());
+		player.getInventory().addItem(itemStack);
+		int afterGiveAmount = MainAreaPlugin.inventoryTotalAmount(player.getInventory());
+		if (afterGiveAmount - initialAmount < itemStack.getAmount()) {
+			itemStack.setAmount(afterGiveAmount - initialAmount);
+			return itemStack;
+		}
+		return null;
+	}
+	
+	public static int inventoryTotalAmount(Inventory inventory) {
+		int totalAmount = 0;
+		for (ItemStack itemStack : inventory) {
+			if (itemStack != null) {
+				totalAmount += itemStack.getAmount();
+			}
+		}
+		return totalAmount;
+	}
+	
+	public List<Material> getMaterialChests() {
+		return this.materialChests;
+	}
+	
+	public List<Material> getMaterialDoors() {
+		return this.materialDoors;
+	}
+	
+	public List<Material> getMaterialRedstone() {
+		return this.materialRedstone;
+	}
+	
+	public List<List> getTempVariables() {
+		return this.tempVariables;
+	}
+	
+	public boolean getIsWildernessUnbreakable() {
+		return this.isWildernessUnbreakable;
+	}
+	
+	public boolean getPlayerCanPlaceTnt() {
+		return this.playerCanPlaceTnt;
+	}
+	
+	public boolean getPlayerCanPlaceMinecartWithTnt() {
+		return this.playerCanPlaceMinecartWithTnt;
+	}
+	
+	public boolean getPlayerCanPlaceEndCrystal() {
+		return this.playerCanPlaceEndCrystal;
+	}
+	
+	public String getDefaultNameArea() {
+		return this.defaultNameArea;
+	}
+	
+	public List<Area> getAllAreas() {
+		return this.allAreas;
+	}
+	
+	public void addArea(Area area) {
+		this.allAreas.add(area);
+	}
+	
+	public List<Selection> getAllSelections() {
+		return this.allSelections;
+	}
+	
+	public boolean convertStringToBoolean(String input) {
+		if (input.equals("true")) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	@Override
+	public void onDisable() {
+		SaveAndLoadAreas saveAndLoadAreas = new SaveAndLoadAreas();
+		saveAndLoadAreas.saveAllAreas();
+		saveAndLoadAreas.saveSellSign();
+		saveAndLoadAreas.saveItemstacksToEarn();
+		System.out.println("[AreaPlugin-FDA] Disabled !");
+	}
+}

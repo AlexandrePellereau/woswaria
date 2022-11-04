@@ -1,0 +1,23 @@
+package fr.firedragonalex.rankandlevels;
+
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+
+public class SaveAndLoad {
+	
+	public static void loadPlayer(Player player) {
+		boolean dontFindInLoad = true;
+		if (dontFindInLoad) {
+			Main.setRank(player, Rank.HABITANT);
+		}
+	}
+	
+	public static void loadAllPlayers() {
+		boolean dontFindInLoad = true;
+		if (dontFindInLoad) {
+			Main.setRank(player, Rank.HABITANT);
+		}
+	}
+
+}

@@ -1,0 +1,9 @@
+name: LiveTiktokOnSign-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.livetiktokonsign.Main
+api-version: 1.13
+commands:
+  spawnsign:
+    description: Spawn a sign about a live Tiktok in real time.
+    permission: spawnsign.use

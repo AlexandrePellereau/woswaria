@@ -1,0 +1,55 @@
+package fr.firedragonalex.rankandlevels;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+import fr.firedragonalex.spellandweapon.custom.CustomPlayer;
+
+public class Listeners implements Listener {
+	
+	private Main main;
+	
+	public Listeners(Main main) {
+		this.main = main;
+	}
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent event) {
+		SaveAndLoad.loadPlayer(event.getPlayer());
+		String customName = customPlayer.getRank().getColor()+"["+customPlayer.getRank().getName()+"]"+customPlayer.getPlayer().getName();
+		customPlayer.getPlayer().setDisplayName(customName);
+		customPlayer.getPlayer().setPlayerListName(customName);
+	}
+	
+	@EventHandler
+	public void onPlayerExpChangeEvent(PlayerExpChangeEvent event) {
+		event.setAmount(0);
+	}
+	
+	@EventHandler
+	public void onPlayerChangeLevel(PlayerLevelChangeEvent event) {
+		CustomPlayer customPlayer = fr.firedragonalex.spellandweapon.Main.getCustomPlayerByPlayer(event.getPlayer());
+		if (customPlayer.getLevel() != 0) {
+			customPlayer.getPlayer().sendTitle("§aFélicitations !", "§aVous êtes maintenant niveau "+customPlayer.getLevel()+" !", 20, 20*3, 20);
+			customPlayer.getPlayer().sendMessage("§aFais /levelrewards pour récupérer ta récompense de niveau !");
+		}
+	}
+	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent event) {
+		CustomPlayer customPlayer = fr.firedragonalex.spellandweapon.Main.getCustomPlayerByPlayer(event.getPlayer());
+		if (customPlayer != null) {
+			event.setFormat(customPlayer.getRank().getColor()+"["+customPlayer.getRank().getName()+" de "+ChatColor.BLUE+"Example"+customPlayer.getRank().getColor()+"] "+customPlayer.getPlayer().getName()+" : %2$s");
+		} else {
+			event.getPlayer().sendMessage("Tu n'as pas de grade (même celui de joueur normal) donc tu ne peux parler dans le chat. S'il vous plait, contacter un administarteur.");
+		}
+	}
+	
+}

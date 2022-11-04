@@ -1,0 +1,57 @@
+package fr.firedragonalex.spellandweapon.quests;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+
+import fr.firedragonalex.spellandweapon.custom.CustomMonsterType;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStep;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStepBreakBlocks;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStepKillMonster;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStepTalkVillager;
+
+public enum Quest {
+	
+	TUTORIEL("Tutoriel", Material.PAPER,Arrays.asList(
+			new QuestStepBreakBlocks(5,Material.STONE),
+			new QuestStepTalkVillager(ChatColor.GREEN+"TutoPNJ", Arrays.asList("Salut chevalier !","Récolte 5 pierre pour moi !"))
+			)),
+	QUOTIDIENNE1("Quête quotidienne 1", Material.PAPER,Arrays.asList(
+			new QuestStepBreakBlocks(3,Material.COAL_ORE),
+			new QuestStepKillMonster(5, CustomMonsterType.BLOB_DE_GLACE)
+			));
+	
+	private QuestStep test = new QuestStepKillMonster(5, CustomMonsterType.BLOB_DE_GLACE);
+	
+	private String name;
+	private Material representedItem;
+	private List<QuestStep> allSteps;
+	
+	private Quest(String name, Material representedItem,List<QuestStep> allSteps) {
+		this.name = name;
+		this.representedItem = representedItem;
+		this.allSteps = allSteps;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public Material getItem() {
+		return this.representedItem;
+	}
+	
+	public List<QuestStep> getAllSteps() {
+		return this.allSteps;
+	}
+	
+	public QuestStep getStep(int numberStep) {
+		return this.allSteps.get(numberStep).clone();
+	}
+	
+	public void giveRewards() {
+		
+	}
+}

@@ -1,0 +1,40 @@
+package fr.firedragonalex.spellandweapon.commands;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.spellandweapon.Main;
+import fr.firedragonalex.spellandweapon.custom.CustomEntity;
+import fr.firedragonalex.spellandweapon.custom.CustomMonsterType;
+import fr.firedragonalex.spellandweapon.custom.CustomMonster;
+
+public class CommandSummonMonster implements CommandExecutor{
+	
+	private Main main;
+	
+	public CommandSummonMonster(Main main) {
+		this.main = main;
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] arguments) {
+		if (!(sender instanceof Player)) return false;
+		Player player  = (Player)sender;
+		Location location;
+		if (arguments.length == 2) {
+			location = player.getLocation();
+		} else if (arguments.length == 5) {
+			location = new Location(null, Integer.valueOf(arguments[2]), Integer.valueOf(arguments[3]), Integer.valueOf(arguments[4]));
+		} else {
+			return false;
+		}	
+		CustomMonsterType customMonsterType = CustomMonsterType.valueOf(arguments[0]);
+		CustomMonster customMonster = new CustomMonster(customMonsterType, Integer.valueOf(arguments[1]), location, main);
+		Main.getAllCustomEntities().add((CustomEntity)customMonster);
+		return true;
+	}
+}

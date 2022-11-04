@@ -1,0 +1,47 @@
+package fr.firedragonalex.spellandweapon.quests.step;
+
+import java.util.List;
+
+import fr.firedragonalex.spellandweapon.quests.QuestInProgress;
+
+public abstract class QuestStep {
+	
+	private boolean finish;
+	private QuestInProgress questInProgress;
+	
+	public QuestStep() {
+		this.finish = false;
+		this.questInProgress = null;
+	}
+	
+	public abstract QuestStep clone();
+	
+	public abstract String toPrint();
+	
+	public abstract void checkFinish();
+	
+	public QuestStep startStep(QuestInProgress questInProgress) {
+		QuestStep questStep = this.clone();
+		questStep.setQuestInProgess(questInProgress);
+		return questStep;
+	}
+	
+	public QuestInProgress getQuestInProgress() {
+		return this.questInProgress;
+	}
+	
+	public void setQuestInProgess(QuestInProgress questInProgress) {
+		this.questInProgress = questInProgress;
+	}
+	
+	public boolean isFinish() {
+		this.checkFinish();
+		return this.finish;
+	}
+	
+	public void finish() {
+		this.finish = true;
+		this.questInProgress.nextStep();
+	}
+
+}

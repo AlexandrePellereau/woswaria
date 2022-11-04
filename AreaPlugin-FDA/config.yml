@@ -1,0 +1,33 @@
+#the permission area.edit allow the player to break, place blocks and more in all areas.
+
+#set both yo false if you already manage permissions
+force_all_players_basics_permissions: #areasettings.use,giveareaselector.use,areasellrewards.use
+  have: true 
+  hane_not: false
+
+everywhere:
+  wilderness_is_unbreakable: false
+  player_can_place:
+    tnt: true
+    minecart_with_tnt: true
+    end_crystal: true
+  #think to set gamerule mobGriefing to true for prevents creeper or set is_invulnerable_to_explosion to True
+
+save_areas_when_player_quit: true #can create lag in a big server but it's more safe (if the server crash, the areas will be not save)
+#                                 (by default areas are saved when the plugin is disabled (server closed, restart, reload))
+
+default_settings:
+  name_area: Area
+  mates_can:
+    place_and_break_blocs: false
+    open_chest: true
+    open_doors: true
+    use_redstone: true
+  everyone_can:
+    open_chest: false
+    open_doors: true
+    use_redstone: false
+  is_invulnerable_to_explosion: true
+  must_be_distinct: true
+
+easter_egg: true

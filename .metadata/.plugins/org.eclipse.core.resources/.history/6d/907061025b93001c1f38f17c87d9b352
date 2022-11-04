@@ -1,0 +1,30 @@
+package fr.firedragonalex.spellandweapon.commands;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.spellandweapon.custom.CustomWeapon;
+
+public class CommandGiveWeapon implements CommandExecutor{
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] arguments) {
+		if (!(sender instanceof Player)) return true;
+		Player player  = (Player)sender;
+		CustomWeapon customWeapon = CustomWeapon.valueOf(arguments[0]);
+		player.getInventory().addItem(customWeapon.getItem());
+		player.sendMessage("§eVous avez bien reçu "+customWeapon.getName());
+		/*
+		try {
+			CustomWeapon customWeapon = CustomWeapon.valueOf(arguments[0]);
+			player.getInventory().addItem(customWeapon.getItem());
+			player.sendMessage("§eVous avez bien reçu "+customWeapon.getName());
+		} catch (Exception e) {
+			player.sendMessage("§cCette arme n'existe pas !");
+		}
+		*/
+		return false;
+	}
+}

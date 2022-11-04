@@ -1,0 +1,111 @@
+package fr.firedragonalex.rankandlevels;
+
+import java.util.HashMap;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+import fr.firedragonalex.spellandweapon.custom.CustomPlayer;
+
+public class Main extends JavaPlugin {
+	
+	private static HashMap<Integer, HashMap<Rank, ItemStack>> allCustomRewards = new HashMap<>();
+	private static HashMap<UUID, Rank> playersRanks = new HashMap<>();
+	
+	@Override
+	public void onEnable() {
+//		Main.allItemsReward;
+//		HashMap page = new HashMap();
+//		HashMap column = new HashMap();
+		getCommand("levelrewards").setExecutor(new Commands());
+		getCommand("feed").setExecutor(new Commands());
+		getCommand("craft").setExecutor(new Commands());
+		getCommand("enderchest").setExecutor(new Commands());
+		getServer().getPluginManager().registerEvents(new Listeners(this), this);
+		
+		SaveAndLoad.loadAllPlayers();
+		
+		System.out.println("[RankAndLevels-FDA] Enabled !");
+	}
+	
+	public static HashMap<Integer, HashMap<Rank, ItemStack>> getCustomRewards() {
+		return Main.allCustomRewards;
+	}
+	
+	public static void setRank(Player player, Rank rank) {
+		Main.setRank(player.getUniqueId(), rank);
+	}
+	
+	public static void setRank(UUID uuid, Rank rank) {
+		if (Main.playersRanks.containsKey(uuid)) {
+			Main.playersRanks.replace(uuid, rank);
+		} else {
+			Main.playersRanks.put(uuid, rank);
+		}
+		Player player = Bukkit.getPlayer(uuid);
+		
+		String customName = rank.getColor()+"["+rank.getName()+"] "+player.getName();
+		
+		player.setDisplayName(customName);
+		player.setPlayerListName(customName);
+	}
+	
+	public static Rank getRank(UUID uuid) {
+		return Main.playersRanks.get(uuid);
+	}
+	
+	public static Rank getRank(Player player) {
+		return Main.playersRanks.get(player.getUniqueId());
+	}
+	
+	public static ItemStack customItem(Material itemType, String name) {
+		ItemStack item = new ItemStack(itemType,1);
+		ItemMeta itemMeta = item.getItemMeta();
+		itemMeta.setDisplayName(name);
+		item.setItemMeta(itemMeta);
+		return item;
+	}
+	
+	public static void GuiLevelRewards(Player player,int number) {
+		int page = Math.floorDiv(number, 9);
+		Rank rank = Main.getRank(player);
+		int tempNumber = page*9;
+		
+		Inventory gui = Bukkit.createInventory(null, 3*9, "§1LevelRewards|page:"+String.valueOf(page));
+		
+		for (int i = 0; i < 3*9; i++) {
+			gui.setItem(i,Main.customItem(Material.BLACK_STAINED_GLASS_PANE, "§"));
+		}
+		
+		for (int i = 0; i < 9; i++) {
+			ItemStack item = null;
+			if (Main.getCustomRewards().containsKey(tempNumber) && Main.getCustomRewards().get(tempNumber).containsKey(rank)) {
+				gui.setItem(i,Main.getCustomRewards().get(tempNumber).get(rank));
+			} else {
+				if (tempNumber % 3 == 0) {
+					
+				} else {
+					item = Main.customItem(Material.GOLD_NUGGET, "Normal");
+				}
+			}
+			tempNumber++;
+		}
+		
+		player.openInventory(gui);
+	}
+	
+	@Override
+	public void onDisable() {
+		
+		System.out.println("[RankAndLevels-FDA] Disabled !");
+	}
+}

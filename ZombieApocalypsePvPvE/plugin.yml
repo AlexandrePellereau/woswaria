@@ -1,0 +1,8 @@
+name: ZombieApocalypsePvPvE
+version: 1.2.0
+author: FireDragonAlex
+main: fr.firedragonalex.zombieapocalypsepvpve.FMain
+commands:
+  join:
+    description: Rejoindre la partie
+    permission: test.use

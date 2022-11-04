@@ -1,0 +1,5 @@
+name: ShowDamage-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.showdamage.Main
+api-version: 1.17

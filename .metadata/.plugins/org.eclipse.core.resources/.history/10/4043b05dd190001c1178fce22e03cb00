@@ -1,0 +1,53 @@
+package fr.firedragonalex.spellandweapon.alexlibrairy;
+
+import java.util.List;
+
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+public class UsefulFonctions {
+	
+	public static void giveOrDrop(List<ItemStack> allItemstacks, Player player) {
+		for (ItemStack itemstack : allItemstacks) {
+			UsefulFonctions.giveOrDrop(itemstack, player);
+		}
+	}
+	
+	public static void giveOrDrop(ItemStack itemStack, Player player) {
+		int initialAmount = UsefulFonctions.inventoryTotalAmount(player.getInventory());
+		player.getInventory().addItem(itemStack);
+		int afterGiveAmount = UsefulFonctions.inventoryTotalAmount(player.getInventory());
+		if (afterGiveAmount - initialAmount < itemStack.getAmount()) {
+			itemStack.setAmount(afterGiveAmount - initialAmount);
+			player.getWorld().dropItem(player.getLocation(), itemStack);
+		}
+	}
+	
+	public static ItemStack giveOrReturn(ItemStack itemStack, Player player) {
+		return UsefulFonctions.giveOrReturn(itemStack, player.getInventory());
+	}
+	
+	public static ItemStack giveOrReturn(ItemStack itemStack, Inventory inventory) {
+		if (itemStack == null) return null;
+		int initialAmount = UsefulFonctions.inventoryTotalAmount(inventory);
+		inventory.addItem(itemStack);
+		int afterGiveAmount = UsefulFonctions.inventoryTotalAmount(inventory);
+		if (afterGiveAmount - initialAmount < itemStack.getAmount()) {
+			itemStack.setAmount(afterGiveAmount - initialAmount);
+			return itemStack;
+		}
+		return null;
+	}
+	
+	public static int inventoryTotalAmount(Inventory inventory) {
+		int totalAmount = 0;
+		for (ItemStack itemStack : inventory) {
+			if (itemStack != null) {
+				totalAmount += itemStack.getAmount();
+			}
+		}
+		return totalAmount;
+	}
+
+}

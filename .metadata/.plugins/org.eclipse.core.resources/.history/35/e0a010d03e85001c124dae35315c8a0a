@@ -1,0 +1,23 @@
+package fr.firedragonalex.rankandlevels;
+
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+public class ListenerGUI implements Listener{
+	
+	@EventHandler
+	public void onClick(InventoryClickEvent event) {
+		String inventoryTitle = event.getView().getTitle();
+		Player player = (Player)event.getWhoClicked();
+		ItemStack item = event.getCurrentItem();
+		if (item == null || !item.hasItemMeta()) return;
+		if (inventoryTitle.contains("|") && inventoryTitle.split("|")[0].equals("§1LevelRewards")) {
+			if (item.getItemMeta().getDisplayName().contains("Normal")) {
+				
+			}
+		}
+	}
+}

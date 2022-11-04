@@ -1,0 +1,58 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+public enum CustomArmor {
+	
+	PLUMAGE_DE_PHENIX(
+			ChatColor.RED+"Plumage de phénix",
+			Arrays.asList("Cette armure est constituée de plume phénix,","inventé par GrendSaje et connue pour la légende du barbare marchant sur la lave."),
+			Material.LEATHER,
+			10,50);
+	
+	private String name;
+	private List<String> lore;
+	private Material typeItem;
+	private int defense;
+	private int health;
+	
+	private CustomArmor(String name, List<String> lore, Material typeItem, int defense, int health) {
+		this.name = name;
+		this.lore = lore;
+		this.typeItem = typeItem;
+		this.defense = defense;
+		this.health = health;
+	}
+	
+	public ItemStack getItem() {
+		ItemStack item = new ItemStack(typeItem);
+		ItemMeta mItem = item.getItemMeta();
+		List<String> infos = new ArrayList<String>();
+		infos.add("Défense:"+String.valueOf(damage));
+		infos.add("Vie:"+String.valueOf(damage));
+		mItem.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+		mItem.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		mItem.addAttributeModifier(Attribute.GENERIC_ATTACK_SPEED,new AttributeModifier("test", 0, Operation.ADD_NUMBER));
+		//mItem.addAttributeModifier(Attribute.GENERIC_ARMOR,new AttributeModifier("salut ", 2.0,Operation.ADD_NUMBER));
+		mItem.setUnbreakable(true);
+		mItem.setDisplayName(name);
+		List<String> finalLore = Arrays.asList("",ChatColor.YELLOW+"Dégâts: "+ChatColor.RED+"+"+this.damage+ChatColor.YELLOW+"("+this.elementDamage.getColor()+this.elementDamage.getName()+ChatColor.YELLOW+")");
+		finalLore.addAll(lore);
+		mItem.setLore(finalLore);
+		item.setItemMeta(mItem);
+		return item;
+	}
+
+}

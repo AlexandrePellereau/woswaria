@@ -1,0 +1,325 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nullable;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Mob;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+import fr.firedragonalex.spellandweapon.Main;
+import fr.firedragonalex.spellandweapon.element.Element;
+import fr.firedragonalex.spellandweapon.element.ElementType;
+
+public abstract class CustomEntity {
+	
+	protected UUID entityID;
+	protected LivingEntity entity;
+	protected LivingEntity killer;
+	protected int level;
+	protected int attack;
+	protected int regeneration;
+	protected int health;
+	protected int maxHealth;
+	protected Main main;
+	protected List<Element> listElements;
+	protected List<ElementType> listElementsImmune;
+	private List<Mob> mobsWhoHaveThisInTarget;
+	
+	public CustomEntity(Main main, LivingEntity entity, int level, int attack, int regeneration, int maxHealth) {
+		this.entityID = entity.getUniqueId();
+		this.entity = entity;
+		if (this.getEntity().getType() == EntityType.SLIME) {
+			Slime slime = (Slime)this.getEntity();
+			int size;
+			if (level == 0) {
+				size = 1;
+			} else if (level >= 25){
+				size = 5;
+			} else {
+				size = Math.floorDiv(level, 5);
+			}
+			slime.setSize(size);
+		}
+		this.level = level;
+		this.attack = attack;
+		this.regeneration = regeneration;
+		this.maxHealth = maxHealth;
+		this.main = main;
+		this.killer = null;
+		this.listElements = new ArrayList<Element>();
+		this.listElementsImmune = new ArrayList<ElementType>();
+		if (!(this.getEntity() instanceof Player)) {
+			this.getEntity().getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+		}
+		this.health = maxHealth;
+		this.mobsWhoHaveThisInTarget = new ArrayList<Mob>();
+	}
+	
+	public abstract void death();
+	
+	public abstract void updateCustomHealthBar();
+	
+	public abstract void setHealth(int health);
+	
+	public void kill() {
+		for (Mob mob : this.mobsWhoHaveThisInTarget) {
+			mob.setTarget(null);
+		}
+		this.death();
+	}
+	
+	public LivingEntity getEntity() {
+		return this.entity;
+	}
+	
+//	public LivingEntity getEntity() {
+//		LivingEntity entity = (LivingEntity)Bukkit.getEntity(this.entityID);
+//		if (entity == null) entity = (LivingEntity)Bukkit.getPlayer(entityID);
+//		if (entity == null) {
+//			System.out.println("[SpellAndWeapon] Entity remove.");
+//		}
+//		main.getAllCustomEntities().remove(this);
+//		if (this instanceof CustomPlayer) main.getAllCustomPlayers().remove(this);
+//		return entity;
+//	}
+	
+	public LivingEntity getKiller() {
+		return this.killer;
+	}
+	
+	public void setKiller(LivingEntity killer) {
+		this.killer = killer;
+	}
+	
+	public int getLevel() {
+		return this.level;
+	}
+	
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	
+	public int getHealth() {
+		return this.health;
+	}
+	
+	public int getMaxHealth() {
+		return this.maxHealth;
+	}
+	
+	public int getAttack() {
+		return this.attack;
+	}
+	
+	public List<Element> getListElements() {
+		return this.listElements;
+	}
+	
+	public void damage(int damage) {
+		this.setHealth(this.health-damage);
+	}
+	
+	public void damage(int damage,LivingEntity damager) {
+		this.killer = damager;
+		this.setHealth(this.health-damage);
+	}
+	
+	public void regeneration() {
+		this.setHealth(this.regeneration+this.health);
+	}
+	
+	public void heal(int health) {
+		this.setHealth(this.getHealth()+health);
+	}
+	
+	public boolean isImmune(ElementType elementType) {
+		return this.listElementsImmune.contains(elementType);
+	}
+	
+	public @Nullable Element getElement(ElementType elementType) {
+		for (Element element : this.getListElements()) {
+			if (element.getType() == elementType) {
+				return element;
+			}
+		}
+		return null;
+	}
+	
+	public boolean hasElement(ElementType elementType) {
+		for (Element element : this.getListElements()) {
+			if (element.getType() == elementType) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean reactionsElement(Element elementToAdd) {
+		//reactions elementaires glace et eau
+		if (elementToAdd.getType()==ElementType.ICE && this.hasElement(ElementType.FIRE)) {
+			Element tempWaterElement = new Element(ElementType.WATER, Math.floorDiv(elementToAdd.getPower()+this.getElement(ElementType.FIRE).getPower(), 2));
+			this.removeElement(ElementType.FIRE);
+			this.addElement(tempWaterElement);
+			return true;
+		}
+		if (elementToAdd.getType()==ElementType.FIRE && this.hasElement(ElementType.ICE)) {
+			Element tempWaterElement = new Element(ElementType.WATER, Math.floorDiv(elementToAdd.getPower()+this.getElement(ElementType.ICE).getPower(), 2));
+			this.removeElement(ElementType.ICE);
+			this.addElement(tempWaterElement);
+			return true;
+		}
+		//reactions elementaires eau et feu
+		if (elementToAdd.getType()==ElementType.FIRE && this.hasElement(ElementType.WATER)) {
+			return true;
+		}
+		if (elementToAdd.getType()==ElementType.WATER && this.hasElement(ElementType.FIRE)) {
+			for (Element element : this.getListElements()) {
+				if (element.getType()==ElementType.FIRE) {
+					this.getListElements().remove(element);
+					this.getEntity().setFireTicks(0);
+					return true;
+				}
+			}
+		}
+		///////////////////////////////////////////////
+		//reactions elementaires vents et tous les autres
+		if (elementToAdd.getType()==ElementType.WIND) {
+			Location location = this.getEntity().getLocation();
+			this.getEntity().getWorld().spawnParticle(Particle.CLOUD,location,Math.floorDiv(elementToAdd.getPower(), 3));
+			for (Element element : this.getListElements()) {
+				element.setPower(element.getPower()-elementToAdd.getPower());
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	public void addElement(Element elementToAdd) {
+		if (elementToAdd == null) return;
+		if (this.isImmune(elementToAdd.getType())) return;
+		if (!this.reactionsElement(elementToAdd)) {
+			//ajouts de l'éléments + addition des puissances
+			for (Element element : this.getListElements()) {
+				if (element.getType() == elementToAdd.getType()) {
+					element.setPower(element.getPower()+elementToAdd.getPower());
+					this.updateElementEffects();
+					return;
+				}
+			}
+			this.getListElements().add(elementToAdd);
+			this.updateElementEffects();
+		}
+	}
+	
+	public void updateElementEffects() {
+		for (Element element : listElements) {
+			switch (element.getType()) {
+			case FIRE:
+				this.getEntity().setFireTicks(element.getPower());
+				break;
+			case ICE:
+				this.getEntity().setFreezeTicks(140);
+				this.getEntity().removePotionEffect(PotionEffectType.SLOW);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.SLOW,element.getPower(),10,false,false));
+				this.getEntity().removePotionEffect(PotionEffectType.JUMP);
+				//this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.JUMP,element.getPower(),-5,false,false));
+				break;
+			case WATER:
+				this.getEntity().removePotionEffect(PotionEffectType.SLOW_DIGGING);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING,element.getPower(),2,false,false));
+				break;
+			case DARK:
+				this.getEntity().removePotionEffect(PotionEffectType.BLINDNESS);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS,element.getPower(),0,false,false));
+				this.getEntity().removePotionEffect(PotionEffectType.WITHER);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.WITHER,element.getPower(),0,false,false));
+				break;
+			case VEGETAL:
+				this.getEntity().removePotionEffect(PotionEffectType.POISON);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.POISON,element.getPower(),0,false,false));
+				break;
+			case ELECTRICITY:
+				element.setLightningStriker(this.getEntity(),this.main,element);
+				break;
+			case STONE:
+				this.getEntity().removePotionEffect(PotionEffectType.JUMP);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.JUMP,element.getPower(),Math.floorDiv(element.getPower(), -1),false,false));
+				break;
+			case LIGHT:
+				this.getEntity().removePotionEffect(PotionEffectType.GLOWING);
+				this.getEntity().addPotionEffect(new PotionEffect(PotionEffectType.GLOWING,element.getPower(),0,false,false));
+				Iterator<Entity> loop = this.getEntity().getNearbyEntities(30, 5, 30).iterator();
+				while (loop.hasNext()) {
+					Entity entity = loop.next();
+					if (entity instanceof Mob) {
+						Mob mob = (Mob)entity;
+						mob.setTarget(this.getEntity());
+						this.mobsWhoHaveThisInTarget.add(mob);
+					}
+				}
+			default:
+				break;
+			}
+		}
+	}
+	
+	public boolean removeElement(ElementType elementType) {
+		switch(elementType) {
+		case FIRE:
+			this.getEntity().setFireTicks(0);
+			break;
+		case WATER:
+			this.getEntity().removePotionEffect(PotionEffectType.SLOW_DIGGING);
+			break;
+		case ICE:
+			this.getEntity().removePotionEffect(PotionEffectType.JUMP);
+			this.getEntity().removePotionEffect(PotionEffectType.SLOW);
+			break;
+		case DARK:
+			this.getEntity().removePotionEffect(PotionEffectType.BLINDNESS);
+			this.getEntity().removePotionEffect(PotionEffectType.WITHER);
+			break;
+		case VEGETAL:
+			this.getEntity().removePotionEffect(PotionEffectType.POISON);
+			break;
+		case STONE:
+			this.getEntity().removePotionEffect(PotionEffectType.JUMP);
+			break;
+		default:
+			break;
+		}
+		for (Element element : this.getListElements()) {
+			if (element.getType() == elementType) {
+				this.getListElements().remove(element);
+				if (elementType == ElementType.ELECTRICITY) {
+					if (!element.getLightningStriker().isCancelled()) {
+						element.getLightningStriker().strikeLighting();
+					}
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public void clearElements() {
+		for (ElementType elementType : ElementType.values()) {
+			this.removeElement(elementType);
+		}
+	}
+
+}

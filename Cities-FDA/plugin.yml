@@ -1,0 +1,17 @@
+name: Cities-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.cities.Main
+depend: [AreaPlugin-FDA]
+api-version: 1.17
+commands:
+  givecityselector:
+    description: This command give you a cityselector.
+    permission: givecityselector.use
+  citysettings:
+    description: This command open the main gui where you can custom your city.
+    permission: citysettings.use
+  nationality:
+    description: This command set your nationality to the city you choose. (city_name)
+    permission: nationality.use
+    usage: /nationality (city_name)

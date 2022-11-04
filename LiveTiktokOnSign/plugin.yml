@@ -1,0 +1,5 @@
+name: LiveTiktokOnSign-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.livetiktokonsign.Main
+api-version: 1.13

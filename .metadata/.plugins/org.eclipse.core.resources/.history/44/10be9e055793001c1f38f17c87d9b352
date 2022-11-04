@@ -1,0 +1,58 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.attribute.AttributeModifier.Operation;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+public enum CustomArmor {
+	
+	PLUMAGE_DE_PHENIX(
+			ChatColor.RED+"Plumage de phénix",
+			Arrays.asList("Cette armure est constituée de plume phénix,","inventé par GrendSaje et connue pour la légende du barbare marchant sur la lave."),
+			Material.LEATHER,
+			10,50);
+	
+	private String name;
+	private List<String> lore;
+	private Material typeItem;
+	private int defense;
+	private int health;
+	
+	private CustomArmor(String name, List<String> lore, Material typeItem, int defense, int health) {
+		this.name = name;
+		this.lore = lore;
+		this.typeItem = typeItem;
+		this.defense = defense;
+		this.health = health;
+	}
+	
+	public ItemStack getItem() {
+		ItemStack item = new ItemStack(typeItem);
+		ItemMeta mItem = item.getItemMeta();
+		if (lore == null) {
+			lore = new ArrayList<String>();
+		}
+		lore.add("");
+		lore.add("Défense:"+String.valueOf(defense));
+		lore.add("Vie:"+String.valueOf(health));
+		mItem.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+		mItem.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+		mItem.setUnbreakable(true);
+		mItem.setDisplayName(name);
+		mItem.setLore(finalLore);
+		item.setItemMeta(mItem);
+		return item;
+	}
+
+}

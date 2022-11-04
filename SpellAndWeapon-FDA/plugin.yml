@@ -1,0 +1,60 @@
+name: SpellAndWeapon-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.spellandweapon.Main
+api-version: 1.17
+loadbefore: [City-FDA,AreaPlugin-FDA]
+commands:
+  giveentityremover:
+    description: This command give you a entityremover.
+    permission: giveentityremover.use
+    usage: /giveentityremover takes no arguments.
+  setelement:
+    description: This command give you the element input.
+    permission: setelement.use
+    usage: /setelement (element's name) (power/time thats the same)
+  giveweapon:
+    description: This command give you the weapon you choose.
+    permission: giveweapon.use
+    usage: /giveweapon (weapon's name)
+  givecustommonsterspawner:
+    description: This command give you a givecustomentityspawner of custommonster type.
+    permission: givecustomentityspawner.use
+    usage: /givecustomentityspawner (custommonster's name) (level) (nb monster max) (ticks between monster spawn) (spawn radius) (keep monster radius)
+  givearmor:
+    description: This command give you the armor you choose.
+    permission: givearmor.use
+    usage: /givearmor (armor's name) (number) 0-helmet,1-chestplate,2-leggins,3-boots
+  summonmonster:
+    description: This command spawn a CustomMonster.
+    permission: summonmonster.use
+    usage: /summonmonster (type) (level) or /summonmonster (type) (level) (coord)
+  quests:
+    description: This command open the main GUI of quests.
+    permission: quests.use
+    usage: /quests takes no arguments.
+  resourcepack:
+    description: This command open the GUI to download easly the resourcepack.
+    permission: quests.use
+    aliases: [ressourcepack,texturepack,pack]
+    usage: /resourcepack takes no arguments.
+  spawnnpc:
+    description: This command spawn an npc with a name (first argument) in green.
+    permission: spawnnpc.use
+    usage: /spawnnpc (name)
+  armor:
+    description: This command open the gui to equip armor.
+    permission: armor.use
+    usage: /armor takes no arguments.
+  giveislandgenerator:
+    description: This give you an islandgenerator.
+    permission: giveislandgenerator.use
+    usage: /giveislandgenerator (size) (height) (frequency)
+  undoisland:
+    description: This destroy the previous island created.
+    permission: undoisland.use
+    usage: /undoisland takes no arguments.
+  givetransformacon:
+    description: This transform mob to no-ia mob.
+    permission: givetransformacon.use
+    usage: /givetransformacon takes no arguments.

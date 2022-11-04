@@ -1,0 +1,9 @@
+name: CpsCheck
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.cpscheck.Main
+api-version: 1.17
+commands:
+  cpscheck:
+    description: This command check the cps of the player choosen.
+    permission: cpscheck.use

@@ -1,0 +1,57 @@
+package fr.firedragonalex.spellandweapon.quests;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Villager;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+
+import fr.firedragonalex.spellandweapon.Main;
+import fr.firedragonalex.spellandweapon.custom.CustomPlayer;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStep;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStepBreakBlocks;
+import fr.firedragonalex.spellandweapon.quests.step.QuestStepTalkVillager;
+
+public class ListenersQuest implements Listener {
+
+	private Main main;
+
+	public ListenersQuest() {
+		this.main = Main.getInstance();
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onBreakBock(BlockBreakEvent event) {
+		if (!event.isCancelled()) {
+			CustomPlayer customPlayer = Main.getCustomPlayerByPlayer(event.getPlayer());
+			if (customPlayer.getCurrentQuest() == null) return;
+			QuestStep step = customPlayer.getCurrentQuest().getStep();
+			if (step instanceof QuestStepBreakBlocks) {
+				QuestStepBreakBlocks stepBreakBlocks = (QuestStepBreakBlocks)step;
+				if (event.getBlock().getType() == stepBreakBlocks.getTypeOfBlocksToBreak()) {
+					stepBreakBlocks.blockBreak();
+				}
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onInteractAtEnity(PlayerInteractAtEntityEvent event) {
+		if (event.isCancelled()) return;
+		if (event.getRightClicked() instanceof Villager) {
+			CustomPlayer customPlayer = Main.getCustomPlayerByPlayer(event.getPlayer());
+			Villager villager = (Villager)event.getRightClicked();
+			if (customPlayer.getCurrentQuest() == null) return;
+			if (customPlayer.getCurrentQuest().getStep() instanceof QuestStepTalkVillager) {
+				QuestStepTalkVillager step = (QuestStepTalkVillager)customPlayer.getCurrentQuest().getStep();
+				if (step.getVillagerName().equals(villager.getCustomName())) {
+					step.startSpeech(event.getPlayer());
+				}
+			}
+		}
+	}
+
+}

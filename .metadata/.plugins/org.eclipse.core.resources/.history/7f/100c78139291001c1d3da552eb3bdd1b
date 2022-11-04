@@ -1,0 +1,194 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
+
+import fr.firedragonalex.spellandweapon.Craft;
+import fr.firedragonalex.spellandweapon.element.Element;
+import fr.firedragonalex.spellandweapon.element.ElementType;
+
+public enum CustomMonsterType {
+	
+	ZOMBIE_VENIMEUX(
+			"Zombie venimeux",                                                        //nom  /!\Pas d'accents/!\ 
+			EntityType.ZOMBIE,                                                        //type entité
+			100,0,10,null,                                                            //nb de départ : max vie, regénération,nbDégâts
+			new Element(ElementType.VEGETAL,20*5),                                      //élément appliqué (type,temps en ticks)
+			Arrays.asList(),                                                          //liste éléments immune 
+			2,Arrays.asList(new ItemStack(Material.SLIME_BALL,1))),                   //xp donné, loots
+	BLOB_EAU(
+			"Blob d'eau",
+			EntityType.SLIME,
+			25,0,1,ElementType.WATER,
+			new Element(ElementType.WATER,20*5),
+			Arrays.asList(ElementType.WATER),
+			1,Arrays.asList()),
+	BLOB_DE_FEU(
+			"Blob de feu",
+			EntityType.SLIME,
+			25,0,
+			1,ElementType.FIRE,
+			new Element(ElementType.FIRE,20*5),
+			Arrays.asList(ElementType.FIRE),
+			1,Arrays.asList()),
+	BLOB_DE_GLACE(
+			"Blob de glace",
+			EntityType.SLIME,
+			25,0,1,ElementType.ICE,
+			new Element(ElementType.ICE,20*5),
+			Arrays.asList(ElementType.ICE),
+			1,Arrays.asList(
+					Craft.customItem(Material.DIAMOND,ChatColor.AQUA+"Givralite"))),
+	BLOB_ELECTRIQUE(
+			"Blob d'electricite",
+			EntityType.SLIME,
+			25,0,1,ElementType.ELECTRICITY,
+			new Element(ElementType.ELECTRICITY,20*5),
+			Arrays.asList(ElementType.ELECTRICITY),
+			1,Arrays.asList()),
+	BLOB_DE_LUMIERE(
+			"Blob de lumiere",
+			EntityType.SLIME,
+			25,0,1,ElementType.LIGHT,
+			new Element(ElementType.LIGHT,20*5),
+			Arrays.asList(ElementType.LIGHT),
+			1,Arrays.asList()),
+	BLOB_SOMBRE(
+			"Blob sombre",
+			EntityType.SLIME,
+			25,0,1,ElementType.DARK,
+			new Element(ElementType.DARK,20*5),
+			Arrays.asList(ElementType.DARK),
+			1,Arrays.asList()),
+	BLOB_DE_TERRE(
+			"Blob de terre",
+			EntityType.SLIME,
+			25,0,1,ElementType.STONE,
+			new Element(ElementType.STONE,20*5),
+			Arrays.asList(ElementType.STONE),
+			1,Arrays.asList()),
+	BLOB_DE_VENT(
+			"Blob de vent",
+			EntityType.SLIME,
+			25,0,1,ElementType.WIND,
+			new Element(ElementType.WIND,20*5),
+			Arrays.asList(ElementType.WIND),
+			1,Arrays.asList()),
+	BLOB_VENIMEUX(
+			"Blob venimeux",
+			EntityType.SLIME,
+			25,0,1,ElementType.VEGETAL,
+			new Element(ElementType.VEGETAL,20*5),
+			Arrays.asList(ElementType.VEGETAL),
+			1,Arrays.asList()),
+	GOLEM_DE_PIERRE(
+			"Golem de pierre",
+			EntityType.POLAR_BEAR,
+			75,0,20,ElementType.STONE,
+			null,
+			Arrays.asList(),
+			1,Arrays.asList(
+					new ItemStack(Material.COBBLESTONE,5),
+					new ItemStack(Material.MOSSY_COBBLESTONE,1))),
+	GOLEM_DE_ROCHE(
+			"Golem de roche",
+			EntityType.IRON_GOLEM,
+			75,0,20,ElementType.STONE,
+			null,
+			Arrays.asList(),
+			1,Arrays.asList(
+					new ItemStack(Material.COBBLESTONE,5),
+					new ItemStack(Material.MOSSY_COBBLESTONE,1))),
+	LOUP_DES_ABYSSES(
+			"loup des abysses",
+			EntityType.WOLF,
+			10,0,2,ElementType.DARK,
+			new Element(ElementType.DARK,20*15),
+			Arrays.asList(),
+			1,Arrays.asList(
+					new ItemStack(Material.OBSIDIAN,3))),
+	VENINSECTE(
+			"Veninsecte",
+			EntityType.SILVERFISH,
+			40,0,10,ElementType.VEGETAL,
+			new Element(ElementType.VEGETAL,20*5),
+			Arrays.asList(),
+			1,Arrays.asList(new ItemStack(Material.ROTTEN_FLESH,7))),
+	PETIT_DEMON(
+			"petit demon",
+			EntityType.VEX,
+			20,0,20,ElementType.DARK,
+			new Element(ElementType.DARK,20*5),
+			Arrays.asList(),
+			1,Arrays.asList(
+					new ItemStack(Material.CRYING_OBSIDIAN,3),
+					new ItemStack(Material.WITHER_ROSE,1)))
+	;
+	
+	private String name;
+	private EntityType entityType;
+	private int maxHealth;
+	private int regeneration;
+	private int attack;
+	private Element elementApplied;
+	private List<ElementType> listElementsImmune;
+	private int xpGiven;
+	private List<ItemStack> loots;
+	
+	private CustomMonsterType(String name,EntityType entityType,int maxHealth,int regeneration,int attack,ElementType elementDamage,Element elementApplied,List<ElementType> listElementsImmune, int xpGiven,List<ItemStack> loots) {
+		this.name = name;
+		this.entityType = entityType;
+		this.attack = attack;
+		this.regeneration = regeneration;
+		this.maxHealth = maxHealth;
+		this.elementApplied = elementApplied;
+		this.listElementsImmune = listElementsImmune;
+		this.xpGiven = xpGiven;
+		this.loots = loots;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public EntityType getEntityType() {
+		return this.entityType;
+	}
+	
+	public int getAttack() {
+		return this.attack;
+	}
+	
+	public int getRegeneration() {
+		return this.regeneration;
+	}
+	
+	public int getMaxHealth() {
+		return this.maxHealth;
+	}
+	
+	public Element getElementApplied() {
+		if (this.elementApplied == null) {
+			return null;
+		} else {
+			return this.elementApplied.clone();
+		}
+	}
+	
+	public List<ElementType> getListElementsImmune() {
+		return this.listElementsImmune;
+	}
+	
+	public int getXpGiven() {
+		return this.xpGiven;
+	}
+	
+	public List<ItemStack> getLoots() {
+		return this.loots;
+	}
+}

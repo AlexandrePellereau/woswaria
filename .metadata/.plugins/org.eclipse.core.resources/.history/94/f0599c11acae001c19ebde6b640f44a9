@@ -1,0 +1,45 @@
+package fr.firedragonalex.livetiktokonsign;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class Main extends JavaPlugin {
+	
+	public static HashMap<Sign, SignType> allSigns;
+	public static HashMap<SignType, String> informations;
+	public static Process process = null;
+	public static Main instance;
+	
+	@Override
+	public void onEnable() {
+		Main.instance = this;
+		this.saveDefaultConfig();
+		
+		EveryTicks everyTicks = new EveryTicks("plugins/informations.txt");
+		everyTicks.runTaskTimer(this, 0, 1);
+		if (Main.process != null) {
+			Main.process.destroy();
+			Main.process = null;
+		}
+		Main.allSigns = new HashMap<>();
+		Main.informations =  new HashMap<>();
+		for (SignType signType : SignType.values()) {
+			Main.informations.put(signType, null);
+		}
+		this.getCommand("spawnsign").setExecutor(new Command());
+		this.getCommand("spawnsign").setTabCompleter(new TabCompleter());
+	}
+	
+	public static void updateSign(Sign sign, SignType signType) {
+		for (int i = 0; i < 4; i++) {
+			sign.setLine(i, Main.instance.getConfig().getString((signType.name()+".line"+(i+1))).replace(signType.name(), Main.informations.get(signType)));
+		}
+		sign.update();
+	}
+}

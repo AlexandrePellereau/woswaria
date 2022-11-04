@@ -1,0 +1,40 @@
+package fr.firedragonalex.rankandlevels;
+
+import java.util.List;
+
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+import fr.firedragonalex.spellandweapon.alexlibrairy.UseCsvFiles;
+
+public class SaveAndLoad {
+	
+	public static void loadPlayer(Player player) {
+		List<List<String>> load = UseCsvFiles.load("", "");
+		if (dontFindInLoad) {
+			Main.setRank(player, Rank.HABITANT);
+		}
+	}
+	
+	public static void loadAllPlayers() {
+//		boolean dontFindInLoad = true;
+//		if (dontFindInLoad) {
+//			Main.setRank(player, Rank.HABITANT);
+//		}
+	}
+	
+	public static void savePlayer(Player player) {
+		boolean dontFindInLoad = true;
+		if (dontFindInLoad) {
+			Main.setRank(player, Rank.HABITANT);
+		}
+	}
+	
+	public static void saveAllPlayers() {
+//		boolean dontFindInLoad = true;
+//		if (dontFindInLoad) {
+//			Main.setRank(player, Rank.HABITANT);
+//		}
+	}
+
+}

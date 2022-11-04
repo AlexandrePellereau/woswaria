@@ -1,0 +1,43 @@
+package fr.firedragonalex.rankandlevels;
+
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+
+public class ListenerGUI implements Listener{
+	
+	@EventHandler
+	public void onClick(InventoryClickEvent event) {
+		String inventoryTitle = event.getView().getTitle();
+		Player player = (Player)event.getWhoClicked();
+		ItemStack item = event.getCurrentItem();
+		if (item == null || !item.hasItemMeta()) return;
+		if (inventoryTitle.contains("|") && inventoryTitle.split("|")[0].equals("§1LevelRewards")) {
+			event.setCancelled(true);
+			String page = inventoryTitle.split("|")[1].split(":")[1];
+			String rankNumber = inventoryTitle.split("|")[2].split(":")[1];
+			String itemName = item.getItemMeta().getDisplayName();
+			if (	itemName.contains("Normal") || 
+					itemName.contains("Rare") ||
+					itemName.contains("Très rare") ||
+					itemName.contains("Epique") ||
+					itemName.contains("Légendaire")) {
+				
+			}
+			else if (itemName.equals("Précédent")) {
+				
+			}
+			else if (itemName.equals("Suivant")) {
+							
+			}
+			else if (itemName.equals("Précédent")) {
+				
+			}
+			else if (itemName.equals("Précédent")) {
+				
+			}
+		}
+	}
+}

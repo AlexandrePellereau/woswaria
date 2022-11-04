@@ -1,0 +1,19 @@
+name: AreaPlugin-FDA
+version: 3.1
+author: FireDragonAlex
+main: fr.firedragonalex.areaplugin.MainAreaPlugin
+api-version: 1.18
+softdepend: [SpellAndWeapon-FDA]
+commands:
+  areasettings:
+    description: This command open the main gui where you can custom your area.
+    permission: areasettings.use
+  giveareaselector:
+    description: This command give you a areaselector.
+    permission: giveareaselector.use
+  giveareaselector+:
+    description: This command give you a areaselector with height.
+    permission: giveareaselector+.use
+  areasellrewards:
+    description: This command give you the items (price) when someone buy one of your area.
+    permission: areasellrewards.use

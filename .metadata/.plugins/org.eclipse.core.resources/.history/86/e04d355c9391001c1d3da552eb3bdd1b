@@ -1,0 +1,21 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import java.util.List;
+
+import org.bukkit.Material;
+
+public enum CustomArmor {
+	
+	TEST;
+	
+	private String name;
+	private List<String> lore;
+	private Material typeItem;
+	private int defense;
+	private int health;
+	
+	private CustomArmor(String name, List<String> lore, Material typeItem, int defense, int health) {
+		// TODO Auto-generated constructor stub
+	}
+
+}

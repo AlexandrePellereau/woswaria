@@ -1,0 +1,66 @@
+package fr.firedragonalex.cities;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.plugin.java.JavaPlugin;
+
+import fr.firedragonalex.areaplugin.Selection;
+
+public class Main extends JavaPlugin {
+	
+	private List<Selection> allSelections;
+	private List<City> allCities;
+	private static Main main;
+	
+	@Override
+	public void onEnable() {
+		
+		Main.main = this;
+		
+		saveDefaultConfig();
+		
+		this.allSelections = new ArrayList<Selection>();
+		this.allCities = new ArrayList<City>();
+		
+		this.getCommand("givecityselector").setExecutor(new Commands());
+		this.getServer().getPluginManager().registerEvents(new Listeners(this), this);
+		
+		System.out.println("[Cities-FDA] Enabled !");
+	}
+	
+	public static Main getInstance() {
+		return Main.main;
+	}
+	
+	public City getCityByUUID(UUID uuid) {
+		for (City city : this.getAllCities()) {
+			if (city.getUUID().equals(uuid)) {
+				return city;
+			}
+		}
+		return null;
+	}
+	
+	public List<Selection> getAllSelections() {
+		return this.allSelections;
+	}
+	
+	public List<City> getAllCities() {
+		return this.allCities;
+	}
+	
+	public static boolean isEqualsPlusOrMinus(int a, int b, int n) {
+		return (b >= a-n) && (b <= a+n);
+	}
+	
+	@Override
+	public void onDisable() {
+		SaveAndLoadCities saveAndLoadCities = new SaveAndLoadCities();
+		saveAndLoadCities.save();
+		
+		System.out.println("[Cities-FDA] Disabled !");
+	}
+
+}

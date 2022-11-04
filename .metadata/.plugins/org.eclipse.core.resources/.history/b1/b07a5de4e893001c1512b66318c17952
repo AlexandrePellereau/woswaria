@@ -1,0 +1,118 @@
+package fr.firedragonalex.cities;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+
+import fr.firedragonalex.areaplugin.Area;
+import fr.firedragonalex.areaplugin.MainAreaPlugin;
+import fr.firedragonalex.areaplugin.UseCsvFiles;
+
+public class SaveAndLoadCities {
+	
+	private UseCsvFiles useCsvFiles = new UseCsvFiles();
+	
+	public void save() {
+		this.saveCities();
+		this.saveCitiesAreas();
+		this.saveCitiesLocations();
+	}
+	
+	public void load() {
+		this.loadCities();
+		this.loadCitiesAreas();
+		this.loadCitiesLocations();
+	}
+	
+	private void saveCities() {
+		List<List<String>> listOflines = new ArrayList<List<String>>();
+		listOflines.add(Arrays.asList("CityUUID","Owner","Name"));
+		for (City city : Main.getInstance().getAllCities()) {
+			List<String> line = new ArrayList<>();
+			line.add(city.getUUID().toString());
+			line.add(city.getOwner().toString());
+			line.add(city.getName());
+			listOflines.add(line);
+		}
+		useCsvFiles.save("Cities", listOflines, "plugins/Cities-FDA/saves/");
+	}
+	
+	private void saveCitiesAreas() {
+		List<List<String>> listOflines = new ArrayList<List<String>>();
+		listOflines.add(Arrays.asList("CityUUID","AreaUUID"));
+		for (City city : Main.getInstance().getAllCities()) {
+			for (Area area : city.getListAreas()) {
+				List<String> line = new ArrayList<>();
+				line.add(city.getUUID().toString());
+				line.add(area.getUUID().toString());
+				listOflines.add(line);
+			}
+		}
+		useCsvFiles.save("CitiesAreas", listOflines, "plugins/Cities-FDA/saves/");
+	}
+	
+	private void saveCitiesLocations() {
+		List<List<String>> listOflines = new ArrayList<List<String>>();
+		listOflines.add(Arrays.asList("CityUUID","WorldUUID","FirstPointX","FirstPointY","FirstPointZ","SecondPointX","SecondPointY","SecondPointZ"));
+		for (City city : Main.getInstance().getAllCities()) {
+			List<String> line = new ArrayList<>();
+			for (Location[] couplePoints : city.getListCouplePoints()) {
+				line.add(city.getUUID()+"");
+				line.add(couplePoints[0].getWorld().getUID()+"");
+				line.add(couplePoints[0].getBlockX()+"");
+				line.add(couplePoints[0].getBlockY()+"");
+				line.add(couplePoints[0].getBlockZ()+"");
+				line.add(couplePoints[1].getBlockX()+"");
+				line.add(couplePoints[1].getBlockY()+"");
+				line.add(couplePoints[1].getBlockZ()+"");
+				listOflines.add(line);
+			}
+		}
+		useCsvFiles.save("CitiesLocations", listOflines, "plugins/Cities-FDA/saves/");
+	}
+	
+	private void loadCities() {
+		List<List<String>> lines = useCsvFiles.load("Cities", "plugins/AreaPlugin-FDA/saves/");
+		for (List<String> line : lines) {
+			UUID uuid = UUID.fromString(line.get(0));
+			UUID owner = UUID.fromString(line.get(1));
+			String name = line.get(2);
+			City city = new City(uuid, name, owner);
+			Main.getInstance().getAllCities().add(city);
+		}
+	}
+	
+	private void loadCitiesAreas() {
+		List<List<String>> lines = useCsvFiles.load("CitiesAreas", "plugins/AreaPlugin-FDA/saves/");
+		for (List<String> line : lines) {
+			UUID cityUUID = UUID.fromString(line.get(0));
+			UUID areaUUID = UUID.fromString(line.get(1));
+			City city = Main.getInstance().getCityByUUID(cityUUID);
+			Area area = MainAreaPlugin.getThis().getAreaByUUID(areaUUID);
+			city.addArea(area);
+		}
+	}
+	
+	private void loadCitiesLocations() {
+		List<List<String>> lines = useCsvFiles.load("CitiesLocations", "plugins/AreaPlugin-FDA/saves/");
+		for (List<String> line : lines) {
+			UUID cityUUID = UUID.fromString(line.get(0));
+			UUID worldUUID = UUID.fromString(line.get(1));
+			Integer firstpointX = Integer.valueOf(line.get(2));
+			Integer firstpointY = Integer.valueOf(line.get(3));
+			Integer firstpointZ = Integer.valueOf(line.get(4));
+			Integer secondpointX = Integer.valueOf(line.get(5));
+			Integer secondpointY = Integer.valueOf(line.get(6));
+			Integer secondpointZ = Integer.valueOf(line.get(7));
+			Location firstpoint = new Location(Bukkit.getWorld(worldUUID), firstpointX, firstpointY, firstpointZ);
+			Location secondpoint = new Location(Bukkit.getWorld(worldUUID), secondpointX, secondpointY, secondpointZ);
+			City city = Main.getInstance().getCityByUUID(cityUUID);
+			Location[] couplePoints = {firstpoint,secondpoint};
+			city.getListCouplePoints().add(couplePoints);
+		}
+	}
+}

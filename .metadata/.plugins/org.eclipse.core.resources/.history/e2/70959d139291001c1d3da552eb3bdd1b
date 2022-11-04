@@ -1,0 +1,229 @@
+package fr.firedragonalex.spellandweapon;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import fr.firedragonalex.spellandweapon.commands.CommandGiveWeapon;
+import fr.firedragonalex.spellandweapon.commands.CommandSummonMonster;
+import fr.firedragonalex.spellandweapon.commands.Commands;
+import fr.firedragonalex.spellandweapon.commands.TabCompleterCommandGiveWeapon;
+import fr.firedragonalex.spellandweapon.commands.TabCompleterCommandSummonMonster;
+import fr.firedragonalex.spellandweapon.custom.CustomEntity;
+import fr.firedragonalex.spellandweapon.custom.CustomPlayer;
+import fr.firedragonalex.spellandweapon.custom.ListenersCustom;
+import fr.firedragonalex.spellandweapon.element.ElementCommands;
+import fr.firedragonalex.spellandweapon.element.ElementType;
+import fr.firedragonalex.spellandweapon.element.EveryTicks;
+import fr.firedragonalex.spellandweapon.element.FreezeAllTime;
+import fr.firedragonalex.spellandweapon.element.ListenersElement;
+import fr.firedragonalex.spellandweapon.quests.ListenersQuest;
+import fr.firedragonalex.spellandweapon.quests.ListenersQuestGUI;
+import fr.firedragonalex.spellandweapon.spell.Spell;
+import fr.firedragonalex.spellandweapon.woswaria.ListenersWoswaria;
+
+
+public class Main extends JavaPlugin{
+	
+	private static Main main;
+	private List<TempHologram> allDamages;
+	private static List<CustomPlayer> allCustomPlayers;
+	private static List<CustomEntity> allCustomEntities;
+	private HashMap<DamageCause, ElementType> damageCauseToElementType;
+	
+	@Override
+	public void onEnable() {
+		Main.main = this;
+		
+		boolean loadWorld = true;
+		
+		if (loadWorld) {
+			this.getServer().createWorld(new WorldCreator("WoswariaBetweenWorld"));
+			this.getServer().createWorld(new WorldCreator("WoswariaTestWorld"));
+			this.getServer().createWorld(new WorldCreator("WoswariaFarmWorld"));
+		}
+		
+		this.createDamageCauseToElementType();
+		this.allDamages = new ArrayList<TempHologram>();
+		Main.allCustomPlayers = new ArrayList<CustomPlayer>();
+		Main.allCustomEntities = new ArrayList<CustomEntity>();
+		
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			CustomPlayer customPlayer = new CustomPlayer(player,this);
+			Main.getAllCustomPlayers().add(customPlayer);
+			Main.getAllCustomEntities().add((CustomEntity)customPlayer);
+		}
+		
+		this.getServer().getPluginManager().registerEvents(new Listeners(), this);
+		this.getServer().getPluginManager().registerEvents(new ListenersQuest(), this);
+		this.getServer().getPluginManager().registerEvents(new ListenersCustom(), this);
+		this.getServer().getPluginManager().registerEvents(new ListenersElement(), this);
+		this.getServer().getPluginManager().registerEvents(new ListenersWoswaria(), this);
+		this.getServer().getPluginManager().registerEvents(new ListenersQuestGUI(), this);
+		
+		getCommand("setelement").setExecutor(new ElementCommands(this));
+		getCommand("giveweapon").setExecutor(new CommandGiveWeapon());
+		getCommand("giveweapon").setTabCompleter(new TabCompleterCommandGiveWeapon());
+		getCommand("summonmonster").setExecutor(new CommandSummonMonster(this));
+		getCommand("summonmonster").setTabCompleter(new TabCompleterCommandSummonMonster());
+		getCommand("quests").setExecutor(new Commands());
+		getCommand("giveentityremover").setExecutor(new Commands());
+		getCommand("resourcepack").setExecutor(new Commands());
+		
+		Craft craft = new Craft(this);
+		
+		EveryTicks everyTicks = new EveryTicks(this);
+		everyTicks.runTaskTimer(this, 0, 1);
+		
+		System.out.println("[SpellAndWeapon-FDA] Enabled !");
+	}
+	
+	public static Main getInstance() {
+		return Main.main;
+	}
+	
+	public void createDamageCauseToElementType() {
+		this.damageCauseToElementType = new HashMap<DamageCause, ElementType>();
+		this.damageCauseToElementType.put(DamageCause.FIRE_TICK, ElementType.FIRE);
+		this.damageCauseToElementType.put(DamageCause.FIRE, ElementType.FIRE);
+		this.damageCauseToElementType.put(DamageCause.LAVA, ElementType.FIRE);
+		this.damageCauseToElementType.put(DamageCause.FREEZE, ElementType.ICE);
+		this.damageCauseToElementType.put(DamageCause.SUFFOCATION, ElementType.STONE);
+		this.damageCauseToElementType.put(DamageCause.FALL, ElementType.STONE);
+		this.damageCauseToElementType.put(DamageCause.POISON, ElementType.VEGETAL);
+		this.damageCauseToElementType.put(DamageCause.CONTACT, ElementType.VEGETAL);
+		this.damageCauseToElementType.put(DamageCause.DROWNING, ElementType.WATER);
+		this.damageCauseToElementType.put(DamageCause.LIGHTNING, ElementType.ELECTRICITY);
+	}
+	
+	public HashMap<DamageCause, ElementType> getDamageCauseToElementType() {
+		return this.damageCauseToElementType;
+	}
+	
+	public @Nullable Spell getSpell(String string) {
+		for (Spell spell : Spell.values()) {
+			if (spell.getFormula().get(0).equalsIgnoreCase(string)) {
+				return spell;
+			}
+		}
+		return null;
+	}
+	
+	public void freeze(Entity target, int seconds) {
+		if (!target.isFrozen() && target.getType()!=EntityType.ARMOR_STAND) {
+			FreezeAllTime freezeAllTime = new FreezeAllTime(this,20*seconds,target,0);
+			freezeAllTime.runTaskTimer(this, 0, 1);
+		}
+	}
+	
+	public void freeze(Entity target, int seconds, double damagePerSnowTick) {
+		if (!target.isFrozen() && target.getType()!=EntityType.ARMOR_STAND) {
+			FreezeAllTime freezeAllTime = new FreezeAllTime(this,20*seconds,target,damagePerSnowTick);
+			freezeAllTime.runTaskTimer(this, 0, 1);
+		}
+	}
+	
+	public static List<CustomPlayer> getAllCustomPlayers() {
+		return Main.allCustomPlayers;
+	}
+	
+	public static List<CustomEntity> getAllCustomEntities() {
+		return Main.allCustomEntities;
+	}
+	
+	public List<TempHologram> getAllDamages() {
+		return this.allDamages;
+	}
+	
+	public static CustomEntity getCustomEntityByEntity(LivingEntity entity) {
+		for(CustomEntity customEntity : allCustomEntities) {
+			if (customEntity.getEntity()==entity) {
+				return customEntity;
+			}
+		}
+		return null;
+	}
+	
+	public static CustomPlayer getCustomPlayerByPlayer(Player player) {
+		for ( CustomPlayer customPlayer : allCustomPlayers) {
+			if (customPlayer.getPlayer()==player) {
+				return customPlayer;
+			}
+		}
+		return null;
+	}
+	
+	public void addDamageShowed(Double nbDamage, String color, Location coordinates) {
+		TempHologram theHologram = new TempHologram(this, nbDamage, color, coordinates);
+		theHologram.runTaskTimer(this, 0, 20);
+		this.getAllDamages().add(theHologram);
+		return;
+	}
+	
+	public void spawnParticlesAround(Particle particle, Location location, int nbParticle) {
+		location.setX(location.getX()-0.5+Math.random());
+		location.setY(location.getY()+(Math.random()*2));
+		location.setZ(location.getZ()-0.5+Math.random());
+		location.getWorld().spawnParticle(particle, location, nbParticle);
+		return;
+	}
+	
+	public void spawnParticlesAround(Particle particle, Location location, int nbParticle, int repeat) {
+		for (int i = 0; i < repeat; i++) {
+			Location tempLocation = location.clone();
+			tempLocation.setX(tempLocation.getX()-0.5+Math.random());
+			tempLocation.setY(tempLocation.getY()+(Math.random()*2));
+			tempLocation.setZ(tempLocation.getZ()-0.5+Math.random());
+			tempLocation.getWorld().spawnParticle(particle, tempLocation, nbParticle);
+		}
+		return;
+	}
+	
+	public void spawnParticlesAroundEntity(Particle particle, Entity entity, int nbParticle) {
+		Location location = entity.getLocation();
+		location.setX(location.getX()-0.5+Math.random());
+		location.setY(location.getY()+(Math.random()*entity.getHeight()));
+		location.setZ(location.getZ()-0.5+Math.random());
+		location.getWorld().spawnParticle(particle, location, nbParticle);
+		return;
+	}
+	
+	public void spawnParticlesAroundEntity(Particle particle, Entity entity, int nbParticle, int repeat) {
+		Location locationInput = entity.getLocation();
+		for (int i = 0; i < repeat; i++) {
+			Location location = locationInput.clone();
+			location.setX(location.getX()-0.5+Math.random());
+			location.setY(location.getY()+(Math.random()*entity.getHeight()));
+			location.setZ(location.getZ()-0.5+Math.random());
+			location.getWorld().spawnParticle(particle, location, nbParticle);
+		}
+		return;
+	}
+	
+	
+	@Override
+	public void onDisable() {
+		//Bukkit.getPluginManager().isPluginEnabled(Bukkit.getPluginManager().getPlugin("RankAndLevels-FDA")); saves ranks
+		for (TempHologram tempHologram : this.allDamages) {
+			tempHologram.getArmorStand().remove();
+		}
+		System.out.println("[SpellAndWeapon-FDA] Disabled !");
+	}
+}

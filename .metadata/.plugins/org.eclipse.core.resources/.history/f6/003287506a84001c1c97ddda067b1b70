@@ -1,0 +1,36 @@
+package fr.firedragonalex.spellandweapon.commands;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import fr.firedragonalex.spellandweapon.Craft;
+import fr.firedragonalex.spellandweapon.quests.QuestGui;
+import fr.firedragonalex.spellandweapon.woswaria.WoswariaGui;
+
+public class Commands implements CommandExecutor{
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] arguments) {
+		if (!(sender instanceof Player)) return true;
+		Player player = (Player)sender;
+		switch (cmd.getName()) {
+		case "quests":
+			QuestGui.startMainGui(player);
+			break;
+		case "giveentityremover":
+			player.getInventory().addItem(Craft.customItem(Material.BONE, ChatColor.RED+"EntityRemover"));
+			break;
+		case "resourcepack":
+			WoswariaGui.startGui_ResourcePack(player);
+			break;
+		default:
+			return false;
+		}
+		return true;
+	}
+
+}

@@ -1,0 +1,12 @@
+name: Diamoney-FDA
+version: 1.0
+author: FireDragonAlex
+main: fr.firedragonalex.diamoney.Main
+api-version: 1.17
+commands:
+  diamoneytransform:
+    description: This command transform diamoney to diamond or diamond to diamoney.
+    permission: diamoneytransform.use
+  diamoneybank:
+    description: This command open the bank's gui.
+    permission: diamoneybank.use

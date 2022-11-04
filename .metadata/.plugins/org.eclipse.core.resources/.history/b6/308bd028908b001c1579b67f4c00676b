@@ -1,0 +1,148 @@
+package fr.firedragonalex.rankandlevels;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import fr.firedragonalex.rankandlevels.rank.Rank;
+import fr.firedragonalex.spellandweapon.custom.CustomPlayer;
+
+public class Main extends JavaPlugin {
+	
+	private static HashMap<Integer, HashMap<Rank, ItemStack>> allCustomRewards = new HashMap<>();
+	private static HashMap<UUID, Rank> playersRanks = new HashMap<>();
+	
+	@Override
+	public void onEnable() {
+//		Main.allItemsReward;
+//		HashMap page = new HashMap();
+//		HashMap column = new HashMap();
+		getCommand("levelrewards").setExecutor(new Commands());
+		getCommand("feed").setExecutor(new Commands());
+		getCommand("craft").setExecutor(new Commands());
+		getCommand("enderchest").setExecutor(new Commands());
+		getServer().getPluginManager().registerEvents(new Listeners(this), this);
+		
+		SaveAndLoad.loadAllPlayers();
+		
+		System.out.println("[RankAndLevels-FDA] Enabled !");
+	}
+	
+	public static HashMap<Integer, HashMap<Rank, ItemStack>> getCustomRewards() {
+		return Main.allCustomRewards;
+	}
+	
+	public static void setRank(Player player, Rank rank) {
+		Main.setRank(player.getUniqueId(), rank);
+	}
+	
+	public static void setRank(UUID uuid, Rank rank) {
+		if (Main.playersRanks.containsKey(uuid)) {
+			Main.playersRanks.replace(uuid, rank);
+		} else {
+			Main.playersRanks.put(uuid, rank);
+		}
+		Player player = Bukkit.getPlayer(uuid);
+		
+		String customName = rank.getColor()+"["+rank.getName()+"] "+player.getName();
+		
+		player.setDisplayName(customName);
+		player.setPlayerListName(customName);
+	}
+	
+	public static Rank getRank(UUID uuid) {
+		return Main.playersRanks.get(uuid);
+	}
+	
+	public static Rank getRank(Player player) {
+		return Main.playersRanks.get(player.getUniqueId());
+	}
+	
+	public static ItemStack customItem(Material itemType, String name) {
+		ItemStack item = new ItemStack(itemType,1);
+		ItemMeta itemMeta = item.getItemMeta();
+		itemMeta.setDisplayName(name);
+		item.setItemMeta(itemMeta);
+		return item;
+	}
+	
+	public static ItemStack customHead(String name,String nameTexture) {
+		ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD,1);
+		SkullMeta playerHeadMeta = (SkullMeta)playerHead.getItemMeta();
+		playerHeadMeta.setDisplayName(name);
+		playerHeadMeta.setOwner(nameTexture);
+		playerHead.setItemMeta(playerHeadMeta);
+		return playerHead;
+	}
+	
+	public static void GuiLevelRewards(Player player,int number,Rank rank) {
+		int page = Math.floorDiv(number, 5);
+		
+		List<Rank> listOfRanks = Arrays.asList(Rank.values());
+		int rankNumber = Math.floorDiv(listOfRanks.indexOf(rank), 2);
+		
+		Inventory gui = Bukkit.createInventory(null, 5*9, "§1LevelRewards|page:"+String.valueOf(page)+"|rank:"+rankNumber);
+		
+		for (int i = 0; i < 5*9; i++) {
+			gui.setItem(i,Main.customItem(Material.BLACK_STAINED_GLASS_PANE, "§"));
+		}
+		
+		if (page != 0) {
+			gui.setItem(9*2,Main.customHead("Précédent","MHF_ArrowLeft"));
+		}
+		gui.setItem(9*3-1,Main.customHead("Suivant","MHF_ArrowRight"));
+		if (rankNumber != 0) {
+			gui.setItem(4,Main.customHead("Grade plus haut","MHF_ArrowTop"));
+		}
+		gui.setItem(9*4+4,Main.customHead("Grade moins haut","MHF_ArrowDown"));
+		
+		for (int i = 0; i < 7; i++) {
+			for (int j = 0; j < 2; j++) {
+				rank = Rank.values()[rankNumber+j];
+				ItemStack item = null;
+				number = page*5+i+1;
+				if (Main.getCustomRewards().containsKey(number) && Main.getCustomRewards().get(number).containsKey(rank)) {
+					item = Main.getCustomRewards().get(number).get(rank);
+				} else {
+					if (!(number % 3 == 0)) {
+						item = Main.customItem(Material.GOLD_NUGGET, "Niveau "+number+" (Normal,"+rank.getName()+")");
+					}
+					else if (!(number % 6 == 0)) {
+						item = Main.customItem(Material.GOLD_INGOT, "Niveau "+number+" (Rare,"+rank.getName()+")");
+					}
+					else if (!(number % 12 == 0)) {
+						item = Main.customItem(Material.GOLD_BLOCK, "Niveau "+number+" (Très rare,"+rank.getName()+")");
+					}
+					else if (!(number % 36 == 0)) {
+						item = Main.customItem(Material.AMETHYST_SHARD, "Niveau "+number+" (Epique,"+rank.getName()+")");
+					} 
+					else {
+						item = Main.customItem(Material.END_CRYSTAL, "Niveau "+number+" (Légendaire,"+rank.getName()+")");
+					}
+				}
+				gui.setItem(i+28-j*18,item);
+			}
+		}
+		
+		player.openInventory(gui);
+	}
+	
+	@Override
+	public void onDisable() {
+		
+		System.out.println("[RankAndLevels-FDA] Disabled !");
+	}
+}

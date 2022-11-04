@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;Rank.java&apos; to &apos;SpellAndWeapon-FDA/src/fr.firedragonalex.spellandweapon.imports&apos;&#x0D;&#x0A;- Original project: &apos;RankAndLevels-FDA&apos;&#x0D;&#x0A;- Destination element: &apos;SpellAndWeapon-FDA/src/fr.firedragonalex.spellandweapon.imports&apos;&#x0D;&#x0A;- Original element: &apos;fr.firedragonalex.rankandlevels.rank.Rank.java&apos;" description="Copy compilation unit" destination="=SpellAndWeapon-FDA/src&lt;fr.firedragonalex.spellandweapon.imports" element1="/src&lt;fr.firedragonalex.rankandlevels.rank{Rank.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1643890496388" units="1" version="1.0"/>
+</session>

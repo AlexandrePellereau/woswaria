@@ -1,0 +1,209 @@
+package fr.firedragonalex.spellandweapon.custom;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.ThrowableProjectile;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
+
+import fr.firedragonalex.spellandweapon.Main;
+import fr.firedragonalex.spellandweapon.element.Element;
+import fr.firedragonalex.spellandweapon.element.ElementType;
+
+public class ListenersCustom implements Listener {
+	private Main main;
+
+	public ListenersCustom() {
+		this.main = Main.getInstance();
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onDamageCustomWeapon(EntityDamageByEntityEvent event) {
+		if (!event.isCancelled()) {
+			Entity damager = event.getDamager();
+			CustomPlayer customPlayer = null;
+			double damage = 0;
+			if (damager instanceof Player) {
+				Player player = (Player)event.getDamager();
+				ItemStack item = player.getInventory().getItemInMainHand();
+				customPlayer = Main.getCustomPlayerByPlayer(player);
+				damage = customPlayer.getAttack();
+				Element elementApplied = null;
+				String colorElement = ElementType.PHYSICAL.getColor();
+				if (item.hasItemMeta()) {
+					for(CustomWeapon customWeapon : CustomWeapon.values()) {
+						if (item.getItemMeta().getDisplayName().equals(customWeapon.getName()) && !customWeapon.isProjectile()) {
+							damage += customWeapon.getDamage();
+							elementApplied = customWeapon.getElementApplied();
+							if (customWeapon.getElementDamage() != null) {
+								colorElement = customWeapon.getElementDamage().getColor();
+							}
+						}
+					}
+				}
+				event.setDamage(damage);
+				if (event.getEntity() instanceof LivingEntity) {
+					CustomEntity customEntity = Main.getCustomEntityByEntity((LivingEntity)event.getEntity());
+					if (customEntity != null) {
+						customEntity.addElement(elementApplied);
+						customEntity.damage((int)damage,player);
+						event.setDamage(0);
+					}
+				}
+				main.addDamageShowed(damage, colorElement, event.getEntity().getLocation());
+			}
+			else if (damager instanceof Arrow) {
+				Arrow arrowDamager = (Arrow)damager;
+				ProjectileSource arrowShooter = arrowDamager.getShooter();
+				if (arrowShooter instanceof Player) {
+					main.addDamageShowed(event.getDamage(), ElementType.PHYSICAL.getColor(), event.getEntity().getLocation());
+					if (event.getEntity() instanceof LivingEntity) {
+						CustomEntity customEntity = Main.getCustomEntityByEntity((LivingEntity)event.getEntity());
+						if (customEntity != null) {
+							customEntity.damage((int)event.getDamage(),(Player)arrowShooter);
+							event.setDamage(0);
+						}
+					}
+				}
+			}
+			else if (damager instanceof ThrowableProjectile) {
+				ThrowableProjectile projectile = (ThrowableProjectile)damager;
+				if (!projectile.getItem().hasItemMeta()) return;
+				for(CustomWeapon customWeapon : CustomWeapon.values()) {
+					if (projectile.getItem().getItemMeta().getDisplayName().equals(customWeapon.getName()) && customWeapon.isProjectile()) {
+						damage = customWeapon.getDamage();
+						String colorElement = "";
+						if (customWeapon.getElementDamage() != null) {
+							colorElement = customWeapon.getElementDamage().getColor();
+						}
+						main.addDamageShowed(damage, colorElement, event.getEntity().getLocation());
+						event.setDamage(damage);
+						if (event.getEntity() instanceof LivingEntity) {
+							CustomEntity customEntity = Main.getCustomEntityByEntity((LivingEntity)event.getEntity());
+							if (customEntity != null) {
+								customEntity.addElement(customWeapon.getElementApplied());
+								customEntity.damage((int)customWeapon.getDamage(),(LivingEntity)projectile.getShooter());
+								event.setDamage(0);
+							}
+						}
+					}
+				}
+			}
+			if (customPlayer != null) {
+				if (customPlayer.hasElement(ElementType.DARK)) {
+					customPlayer.heal((int)Math.round(damage));
+				}
+				if (customPlayer.hasElement(ElementType.VEGETAL)) {
+					int damageFinal = (int)Math.round(((customPlayer.getElement(ElementType.VEGETAL).getPower()*1.0)/300)*damage);
+					customPlayer.damage(damageFinal);
+					main.addDamageShowed((double)damage, "§2", customPlayer.getPlayer().getLocation());
+				}
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onDamageByCustomMob(EntityDamageByEntityEvent event) {
+		if (event.getEntity() instanceof Player) {
+			CustomPlayer customPlayer = Main.getCustomPlayerByPlayer((Player)event.getEntity());
+			if (customPlayer != null) {
+				if (event.getEntity() instanceof LivingEntity && event.getDamager() instanceof LivingEntity) {
+					CustomEntity customEntity = Main.getCustomEntityByEntity((LivingEntity)event.getDamager());
+					if (customEntity != null && customEntity instanceof CustomMonster) {
+						CustomMonster customMonster = (CustomMonster)customEntity;
+						customPlayer.damage(customMonster.getAttack(),customMonster.getEntity());
+						event.setDamage(0);
+						customPlayer.addElement(customMonster.getCustomMonsterType().getElementApplied());
+						return;    
+					}
+				}
+				customPlayer.damage((int)Math.round(event.getDamage()));
+				event.setDamage(0);
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onDamage(EntityDamageEvent event) {
+		if (!event.isCancelled() && event.getCause() != DamageCause.ENTITY_ATTACK) {
+			if (event.getEntity() instanceof Player) {
+				CustomPlayer customPlayer = Main.getCustomPlayerByPlayer((Player)event.getEntity());
+				if (customPlayer != null) {
+					customPlayer.damage((int)Math.round(event.getDamage()));
+					event.setDamage(0);
+				}
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onProjetcileLaunch(ProjectileLaunchEvent event) {
+		if (event.getEntity() instanceof ThrowableProjectile) {
+			ThrowableProjectile entity = (ThrowableProjectile)event.getEntity();
+			entity.setCustomNameVisible(false);
+			if (entity.getItem() != null && entity.getItem().hasItemMeta() && entity.getItem().getItemMeta().getDisplayName() != null) {
+				entity.setCustomName(entity.getItem().getItemMeta().getDisplayName());
+			}
+		}
+	}
+	
+	@EventHandler
+	public void onRegeneration(EntityRegainHealthEvent event) {
+		if (event.getEntity() instanceof Player) {
+			event.setCancelled(true);
+			Player player = (Player)event.getEntity();
+			Main.getCustomPlayerByPlayer(player).regeneration();
+		}
+	}
+	
+	@EventHandler
+	public void onEntityDeath(EntityDeathEvent event) {
+		CustomEntity customEntity = Main.getCustomEntityByEntity(event.getEntity());
+		if (customEntity != null) {
+			event.setDroppedExp(0);
+			if (customEntity instanceof CustomMonster) {
+				CustomMonster customMonster = (CustomMonster)customEntity;
+				event.getDrops().clear();
+				event.getDrops().addAll(customMonster.getCustomMonsterType().getLoots());
+				if (customMonster.getKiller() instanceof Player) {
+					CustomPlayer customPlayer = Main.getCustomPlayerByPlayer((Player)customMonster.getKiller());
+					if (customPlayer != null) { 
+						customPlayer.addXp(customMonster.getXpDrop());
+					}
+				}
+				Main.getAllCustomEntities().remove(customMonster);
+			}
+		}
+	}
+	
+	
+	@EventHandler
+	public void onSlimeSplit(SlimeSplitEvent event) {
+		event.setCancelled(true);
+	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void onDamageColor(EntityDamageEvent event) {
+		if (!event.isCancelled() && event.getEntityType() != EntityType.DROPPED_ITEM) {
+			if (main.getDamageCauseToElementType().containsKey(event.getCause())) {
+				main.addDamageShowed(event.getDamage(), main.getDamageCauseToElementType().get(event.getCause()).getColor(), event.getEntity().getLocation());
+			}
+		}
+	}
+	
+}

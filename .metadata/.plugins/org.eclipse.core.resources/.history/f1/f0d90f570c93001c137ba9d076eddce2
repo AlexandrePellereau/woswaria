@@ -1,0 +1,132 @@
+package fr.firedragonalex.spellandweapon;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExhaustionEvent;
+import org.bukkit.event.entity.EntityInteractEvent;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.inventory.ItemStack;
+
+import fr.firedragonalex.spellandweapon.custom.CustomEntity;
+import fr.firedragonalex.spellandweapon.custom.CustomMonsterType;
+import fr.firedragonalex.spellandweapon.custom.CustomMonster;
+import fr.firedragonalex.spellandweapon.custom.CustomPlayer;
+import fr.firedragonalex.spellandweapon.element.Element;
+import fr.firedragonalex.spellandweapon.element.ElementType;
+import fr.firedragonalex.spellandweapon.spell.Spell;
+
+public class Listeners implements Listener {
+	
+	private Main main;
+
+	public Listeners() {
+		this.main = Main.getInstance();
+	}
+	
+	//////////////////////////////////////////////////////////////////////
+	@EventHandler
+	public void onInteract(PlayerInteractEvent event) {
+//		try {
+			if (event.getItem() != null && event.getItem().hasItemMeta() && event.getItem().getItemMeta().getDisplayName().equals("test")) {
+				if (event.getItem().getType() == Material.IRON_HOE && event.getAction()==Action.RIGHT_CLICK_BLOCK) {
+					event.setCancelled(true);
+					Bukkit.broadcastMessage("add 10 xp");
+					Main.getCustomPlayerByPlayer(event.getPlayer()).addXp(10);
+				}
+				if (event.getItem().getType() == Material.PAPER && (event.getAction()==Action.RIGHT_CLICK_BLOCK || event.getAction()==Action.RIGHT_CLICK_AIR)) {
+					Bukkit.broadcastMessage("ActualWorld:"+event.getPlayer().getWorld().getName());
+					CustomPlayer customPlayer = Main.getCustomPlayerByPlayer(event.getPlayer());
+					for (Element element : customPlayer.getListElements()) {
+						Bukkit.broadcastMessage("type:"+element.getType()+";power:"+element.getPower());
+					}
+					Bukkit.broadcastMessage("fini !");
+				}
+			}
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//		}
+	}
+	@EventHandler
+	public void onInteractEntity(PlayerInteractAtEntityEvent event) {
+		try {
+			if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.GOLDEN_HOE) {
+				CustomMonster customMonster = (CustomMonster)Main.getCustomEntityByEntity((LivingEntity)event.getRightClicked());
+				if (customMonster == null) {Bukkit.broadcastMessage("Not a custom Entity"); return;}
+				Bukkit.broadcastMessage("health : "+ customMonster.getHealth());
+				Bukkit.broadcastMessage("maxHealth : "+ customMonster.getMaxHealth());
+				Bukkit.broadcastMessage("health : "+ customMonster.getEntity().getHealth());
+			}
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	//////////////////////////////////////////////////////////////
+	
+	@EventHandler
+	public void onInteractWithEntityRemover(PlayerInteractAtEntityEvent event) {
+		ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+		if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(ChatColor.RED+"EntityRemover")) {
+			event.getRightClicked().remove();
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void onJoin(PlayerJoinEvent event) {
+		CustomPlayer customPlayer = new CustomPlayer(event.getPlayer(),main);
+		Main.getAllCustomPlayers().add(customPlayer);
+		Main.getAllCustomEntities().add((CustomEntity)customPlayer);
+	}	
+	
+	@EventHandler
+	public void onChat(AsyncPlayerChatEvent event) {
+		String message = event.getMessage();
+		CustomPlayer customPlayer = Main.getCustomPlayerByPlayer(event.getPlayer());
+		if (customPlayer.isCastingSpell()) {
+			event.setCancelled(true);
+			customPlayer.getCastSpell().tryFormula(message);
+		} else {
+			if (message.startsWith("!")) {
+				event.setCancelled(true);
+				message = message.replace("!","");
+				Spell spell = main.getSpell(message);
+				if (spell != null) {
+					customPlayer.setIsCastingSpell(true);
+					customPlayer.setSpell(spell);
+					customPlayer.setAdvancementFormula(1);
+					customPlayer.startSpell();
+				} else {
+					event.getPlayer().sendMessage(ChatColor.RED+"Cette formule magique n'existe pas.");
+				}
+			}
+		}
+	}
+}

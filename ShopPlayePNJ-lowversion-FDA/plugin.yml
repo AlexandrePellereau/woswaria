@@ -1,0 +1,19 @@
+name: ShopPlayerPNJ-FDA
+version: 1.3
+author: FireDragonAlex
+main: fr.firedragonalex.shopplayerpnj.Main
+api-version: 1.13
+softdepend: [SpellAndWeapon-FDA]
+commands:
+  givevillagershop:
+    description: This command give a spawn egg of VillagerShop.
+    permission: givevillagershop.use
+  givevillagershopinfinitetrade:
+    description: This command give a spawn egg of VillagerShop who doesn't have trade limited by stocks.
+    permission: givevillagershopinfinitetrade.use
+  giveskinvillagershop:
+    description: This command give you a chesplate who can apply a skin on a VillagerShop.
+    permission: giveskinvillagershop.use
+  givevillagershopkiller:
+    description: This command give you a VillagerShopKiller.
+    permission: givevillagershopkiller.use
