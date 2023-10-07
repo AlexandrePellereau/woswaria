@@ -1,0 +1,4 @@
+name: ShopAsVillagerForPlayers
+version: '${version}'
+main: fr.dralexgon.shopasvillagerforplayers.Main
+api-version: 1.20
