@@ -2,4 +2,4 @@ name: Cities
 version: '${project.version}'
 main: fr.dralexgon.cities.Cities
 api-version: '1.20'
-authors: [Dralexgon]
+author: Dralexgon
