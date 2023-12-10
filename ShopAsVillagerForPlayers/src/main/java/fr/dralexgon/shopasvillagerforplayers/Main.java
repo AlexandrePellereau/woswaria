@@ -37,9 +37,9 @@ public class Main extends JavaPlugin {
 		saveDefaultConfig();
 		Main.instance = this;
 		
-		this.expirationTime = 1000*60*60*24*365;
-		this.listVillagersShop = new ArrayList<VillagerShop>();
-		this.listVillagersShopInactive = new ArrayList<VillagerShop>();
+		this.expirationTime = 1000L *60*60*24*365;
+		this.listVillagersShop = new ArrayList<>();
+		this.listVillagersShopInactive = new ArrayList<>();
 		this.tempVariables = new ArrayList<List>();
 		this.useCsvFiles = new UseCsvFiles();
 		this.gui = new Gui(this);
@@ -105,10 +105,7 @@ public class Main extends JavaPlugin {
 	}
 	
 	public void addTrade(Villager villager, ItemStack inputTrade, ItemStack inputTrade2, ItemStack outputTrade) {
-		List<MerchantRecipe> tempListOfRecipes = new ArrayList<MerchantRecipe>();
-		for (MerchantRecipe recipe : villager.getRecipes()) {
-			tempListOfRecipes.add(recipe);
-		}
+		List<MerchantRecipe> tempListOfRecipes = new ArrayList<>(villager.getRecipes());
 		MerchantRecipe newTrade = new MerchantRecipe(outputTrade.clone(),0);
 		newTrade.addIngredient(inputTrade.clone());
 		if (inputTrade2 != null) {

@@ -3,7 +3,6 @@ package fr.dralexgon.shopasvillagerforplayers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,11 +13,9 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.NPC;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -26,18 +23,13 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.EntityTransformEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.Merchant;
-import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.PermissionAttachment;
@@ -132,7 +124,7 @@ public class Listeners implements Listener {
 					if (villagerShop.getOwner().equals(player.getUniqueId())) {
 						villagerShop.setVillager(villager);
 						villagerShop.updateMaxUses();
-						List tempList = new ArrayList<>();
+						List<Object> tempList = new ArrayList<>();
 						tempList.add(player);
 						tempList.add("VillagerShopSelected");
 						tempList.add(villagerShop);
@@ -188,7 +180,7 @@ public class Listeners implements Listener {
 	public void onVillagerShopKiller(PlayerInteractAtEntityEvent event) {
 		if (event.getRightClicked() instanceof Villager) {
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("?cVillagerShopKiller")) {
+			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("§cVillagerShopKiller")) {
 				Player player = event.getPlayer();
 				Villager villager = (Villager)event.getRightClicked();
 				for (VillagerShop villagerShop : main.getListVillagersShop()) {
@@ -225,7 +217,7 @@ public class Listeners implements Listener {
 											itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
 										}
 									} else {
-										player.sendMessage("?cCe VillagerShop a d?j? ce skin.");
+										player.sendMessage("§cCe VillagerShop a déjà ce skin.");
 									}
 									return;
 								}
