@@ -1,4 +1,18 @@
 name: ShopAsVillagerForPlayers
 version: '${version}'
+author: Dralexgon
 main: fr.dralexgon.shopasvillagerforplayers.Main
 api-version: 1.20
+commands:
+  givevillagershop:
+    description: This command give a spawn egg of VillagerShop.
+    permission: givevillagershop.use
+  givevillagershopinfinitetrade:
+    description: This command give a spawn egg of VillagerShop who doesn't have trade limited by stocks.
+    permission: givevillagershopinfinitetrade.use
+  giveskinvillagershop:
+    description: This command give you a chesplate who can apply a skin on a VillagerShop.
+    permission: giveskinvillagershop.use
+  givevillagershopkiller:
+    description: This command give you a VillagerShopKiller.
+    permission: givevillagershopkiller.use

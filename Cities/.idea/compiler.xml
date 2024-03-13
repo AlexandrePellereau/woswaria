@@ -6,6 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+      </profile>
+      <profile name="Annotation profile for Cities" enabled="true">
+        <sourceOutputDir name="../TestServer/server/plugins/generated-sources/annotations" />
+        <sourceTestOutputDir name="../TestServer/server/plugins/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
         <module name="cities" />
       </profile>
     </annotationProcessing>

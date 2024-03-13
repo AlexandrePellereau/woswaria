@@ -63,7 +63,7 @@ public class Listeners implements Listener {
 				pnj.setAI(false);
 				pnj.setGravity(true);
 				pnj.setSilent(true);
-				main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, main, false));
+				main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, false));
 				if (player.getGameMode()!=GameMode.CREATIVE) {
 					it.setAmount(it.getAmount()-1);
 				}
@@ -76,7 +76,7 @@ public class Listeners implements Listener {
 				pnj.setAI(false);
 				pnj.setGravity(true);
 				pnj.setSilent(true);
-				main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, main, true));
+				main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, true));
 				if (player.getGameMode()!=GameMode.CREATIVE) {
 					it.setAmount(it.getAmount()-1);
 				}
@@ -108,7 +108,7 @@ public class Listeners implements Listener {
 	public void onLeftClickVillagerShop(EntityDamageByEntityEvent event) {
 		if (event.getDamager() instanceof Player && event.getEntity() instanceof Villager) {
 			Player player = (Player)event.getDamager();
-			List<List> listTempVarToRemove = new ArrayList<List>();
+			List<List> listTempVarToRemove = new ArrayList<>();
 			for (List tempVariable : main.getTempVariables()) {
 				if (tempVariable.get(0)==player && (tempVariable.get(1).equals("VillagerShopSelected") || tempVariable.get(1).equals("RenameVillagerShop") || tempVariable.get(1).equals("TradeSelected"))) {
 					listTempVarToRemove.add(tempVariable);
@@ -217,7 +217,7 @@ public class Listeners implements Listener {
 											itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
 										}
 									} else {
-										player.sendMessage("§cCe VillagerShop a déjà ce skin.");
+										player.sendMessage(ChatColor.RED + "Ce VillagerShop a déjà ce skin.");
 									}
 									return;
 								}
@@ -273,14 +273,14 @@ public class Listeners implements Listener {
 					return;
 				}
 			}
-			if (Math.random()*100 <= main.getConfig().getDouble("percentage_of_getting_a_villagershopegg_when_someone_kill_a_villager")) {
+			if (Math.random()*100 <= main.getConfig().getDouble("drop_egg")) {
 				ItemStack item = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
 				ItemMeta itemMeta = item.getItemMeta();
 				itemMeta.setDisplayName("?eVillagerShop");
 				item.setItemMeta(itemMeta);
 				villager.getWorld().dropItem(villager.getLocation(), item);
 			}
-			if (Math.random()*100 <= main.getConfig().getDouble("percentage_of_getting_a_villagershop_skin_when_someone_kill_a_villager")) {
+			if (Math.random()*100 <= main.getConfig().getDouble("drop_skin")) {
 				ItemStack item = new ItemStack(Material.LEATHER_CHESTPLATE,1);
 				ItemMeta itemMeta = item.getItemMeta();
 				itemMeta.setDisplayName("?9SkinVillagerShop");
@@ -316,17 +316,17 @@ public class Listeners implements Listener {
 		Player player = event.getPlayer();
 		
 		PermissionAttachment attachment;
-		if (main.getConfig().getBoolean("everyone_can_do_this_command.giveskinvillagershop")) {
+		if (main.getConfig().getBoolean("everyone_permission.giveskinvillagershop")) {
 			attachment = player.addAttachment(main);
 			attachment.setPermission("giveskinvillagershop.use", true);
 		}
 		
-		if (main.getConfig().getBoolean("everyone_can_do_this_command.givevillagershop")) {
+		if (main.getConfig().getBoolean("everyone_permission.givevillagershop")) {
 			attachment = player.addAttachment(main);
 			attachment.setPermission("givevillagershop.use", true);
 		}
 		
-		if (main.getConfig().getBoolean("everyone_can_do_this_command.givevillagershopinfinitetrade")) {
+		if (main.getConfig().getBoolean("everyone_permission.givevillagershopinfinitetrade")) {
 			attachment = player.addAttachment(main);
 			attachment.setPermission("givevillagershopinfinitetrade.use", true);
 		}

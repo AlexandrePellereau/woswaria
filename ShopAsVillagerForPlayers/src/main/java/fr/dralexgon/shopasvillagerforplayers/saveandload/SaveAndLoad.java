@@ -129,7 +129,7 @@ public class SaveAndLoad {
 				}
 			}
 			if (villager != null) {
-				VillagerShop villagerShop = new VillagerShop(owner, nameVillagerShop, villager, Main.getInstance(), hasInfiniteTrade);
+				VillagerShop villagerShop = new VillagerShop(owner, nameVillagerShop, villager, hasInfiniteTrade);
 
 				Main.getInstance().getListVillagersShop().add(villagerShop);
 				

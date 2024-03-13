@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VillagerShop {
-	
-	private Main main;
+
 	private UUID owner;
 	private Villager villager;
 	private String name;
@@ -24,8 +23,7 @@ public class VillagerShop {
 	private boolean hasInfiniteTrade;
 	private boolean dead;
 	
-	public VillagerShop(UUID owner, Villager villager, Main main, boolean hasInfiniteTrade) {
-		this.main = main;
+	public VillagerShop(UUID owner, Villager villager, boolean hasInfiniteTrade) {
 		this.owner = owner;
 		this.villager = villager;
 		this.villager.setAI(false);
@@ -42,9 +40,9 @@ public class VillagerShop {
 		this.hasInfiniteTrade = hasInfiniteTrade;
 		this.dead = false;
 	}
-	public VillagerShop(UUID owner, String name, Villager villager, Main main, boolean hasInfiniteTrade) {
-		/*Only use for the save*/
-		this.main = main;
+
+	public VillagerShop(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
+		/*Only used for the save*/
 		this.owner = owner;
 		this.villager = villager;
 		this.villager.setAI(false);
@@ -122,7 +120,7 @@ public class VillagerShop {
 	
 	public void updateMaxUses() {
 		this.updateInventories();
-		this.setListLastMaxeUses(new ArrayList<Integer>());
+		this.setListLastMaxeUses(new ArrayList<>());
 		for (MerchantRecipe trade : this.getVillager().getRecipes()) {
 			if (hasInfiniteTrade) {
 				trade.setMaxUses(64*4*9);
@@ -148,7 +146,7 @@ public class VillagerShop {
 			try {
 				int nbTrade = trade.getUses();
 				for (int j = 0; j < nbTrade; j++) {
-					main.removeInventory(this.getInventoryThingsToSell(), trade.getResult().getType(), trade.getResult().getAmount());
+					Main.getInstance().removeInventory(this.getInventoryThingsToSell(), trade.getResult().getType(), trade.getResult().getAmount());
 					this.getInventoryThingsObtained().addItem(trade.getIngredients().get(0));
 					try {
 						this.getInventoryThingsObtained().addItem(trade.getIngredients().get(1));

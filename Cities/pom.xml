@@ -17,6 +17,7 @@
   </properties>
 
   <build>
+      <directory>C:\Users\alexa\OneDrive\docs_Alexandre\Programmation\GitHub\Woswaria\TestServer\server\plugins</directory>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -43,8 +44,11 @@
     </plugins>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>C:\Users\alexa\OneDrive\docs_Alexandre\Programmation\GitHub\Woswaria\TestServer\server\plugins</directory>
         <filtering>true</filtering>
+          <includes>
+              <include>*.properties</include>
+          </includes>
       </resource>
     </resources>
   </build>

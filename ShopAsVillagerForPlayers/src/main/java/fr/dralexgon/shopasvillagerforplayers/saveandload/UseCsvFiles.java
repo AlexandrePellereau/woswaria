@@ -52,7 +52,7 @@ public class UseCsvFiles {
 		File saveFile = new File(pathFile+nameFile+".csv");
 		if (!saveFile.exists()) {
 			System.out.println("---------------------------------------------------------------------------------------------------------");
-			System.out.println("[Error] \""+nameFile+"\" don't find. (It's normal if it's the first time you start this plugin.)");
+			System.out.println("[Error] \""+nameFile+"\" not found. (It's normal if it's the first time you start this plugin.)");
 			System.out.println("---------------------------------------------------------------------------------------------------------");
 			return null;
 		}else {

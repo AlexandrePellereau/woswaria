@@ -141,7 +141,7 @@ public class Gui {
 						inventory.setItem(9*3+7,this.customHead("Echange suivant","MHF_ArrowRight"));
 					}
 					player.openInventory(inventory);
-					List tempList = new ArrayList<>();
+					List<Object> tempList = new ArrayList<>();
 					tempList.add(player);
 					tempList.add("TradeSelected");
 					tempList.add(indexOfCurrentRecipe);

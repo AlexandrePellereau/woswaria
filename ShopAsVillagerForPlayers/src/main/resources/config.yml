@@ -1,0 +1,22 @@
+#Languages supported : en_us, fr_fr
+language: "en_us"
+
+
+#Set to true if you want to give the permission to all player to use this command by default
+everyone_permission:
+  giveskinvillagershop: False
+  givevillagershop: True
+  givevillagershopinfinitetrade: False
+
+
+drop:
+  #Percentage of getting a villagershop egg when someone kill a villager
+  egg: 10
+  #Percentage of getting a villagershop skin when someone kill a villager
+  skin: 1
+
+
+#if you don't want a character limit for the name of the villagershops, set min to 0 and max to a big number (like 500)
+char_limit:
+  min: 3
+  max: 20

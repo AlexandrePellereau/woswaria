@@ -13,9 +13,9 @@ public final class Cities extends JavaPlugin {
     @Override
     public void onEnable() {
         Cities.locale = new Locale("fr", "FR");
-        Cities.bundle = ResourceBundle.getBundle("Bundle", Cities.locale);
+        Cities.bundle = ResourceBundle.getBundle("src/main/resource/Bundle", Cities.locale);
         System.out.println("Hello SpigotMC");
-        System.out.println(Cities.bundle.getString("console.plugin_enable"));
+        System.out.println("[Cities] " + Cities.bundle.getString("console.plugin_enable"));
     }
 
     @Override
