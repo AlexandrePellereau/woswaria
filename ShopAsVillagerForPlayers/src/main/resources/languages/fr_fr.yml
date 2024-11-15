@@ -5,3 +5,6 @@ log:
   disabled: Désactivé !
 villagershop:
   defaultname: "§eMarchant de "#I put " to see the blank space. It's not mandatory
+gui:
+  inventorythingstosell: §1InventoryThingsToSell
+  inventorythingstobuy: §1InventoryThingsToBuy
