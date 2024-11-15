@@ -38,15 +38,11 @@ public class SaveAndLoad {
 		line.add("UUIDVillagerShop");
 		line.add("UUIDOwner");
 		line.add("NameVillagerShop");
-		line.add("NameWorld");
-		line.add("X(Location)");
-		line.add("Y(Location)");
-		line.add("Z(Location)");
-		line.add("X(LocationDirection)");
-		line.add("Z(LocationDirection)");
+		line.add("UUIDWorld");
+		line.add("ChunkX");
+		line.add("ChunkZ");
 		line.add("IDInventoryThingsObtained");
 		line.add("IDInventoryThingsToSell");
-		line.add("Skin");
 		line.add("HasInfiniteTrade");
 		listOfLines.add(line);
 		
@@ -68,7 +64,7 @@ public class SaveAndLoad {
 		System.out.println("[ShopPlayerPNJ-FDA] All VillagerShop save successfully !");
 	}
 	
-	private static void saveInventoriesVillagerShop() {
+	public static void saveInventoriesVillagerShop() {
 		System.out.println("[ShopPlayerPNJ-FDA] Try to save all InventoriesVillagerShop...");
 		File saveInventory = new File("plugins/ShopPlayerPNJ-FDA/saves/" +"saveItemstacks"+ ".yml");
 		FileConfiguration saveInventoryConfig = new YamlConfiguration();
@@ -102,7 +98,32 @@ public class SaveAndLoad {
         
 		System.out.println("[ShopPlayerPNJ-FDA] All InventoriesVillagerShop save successfully !");
 	}
-	
+
+	private static void loadVillagerShop() {
+		System.out.println("[ShopPlayerPNJ-FDA] Try to load all VillagerShop...");
+		List<List<String>> listOfLines = UseCsvFiles.load("villagershop",  "plugins/ShopPlayerPNJ-FDA/saves/");
+		if (listOfLines == null) {
+			return;
+		}
+		for (List<String> line : listOfLines) {
+
+			VillagerShop villagerShop = new VillagerShop(
+					line.get(0),
+					line.get(1),
+					line.get(2),
+					line.get(3),
+					Integer.valueOf(line.get(4)),
+					Integer.valueOf(line.get(5)),
+					line.get(6),
+					line.get(7),
+					Boolean.valueOf(line.get(8))
+			);
+			Main.getInstance().getListVillagersShop().add(villagerShop);
+		}
+		System.out.println("[ShopPlayerPNJ-FDA] All VillagerShop load successfully !");
+	}
+
+	/*old version
 	private static void loadVillagerShop() {
 		System.out.println("[ShopPlayerPNJ-FDA] Try to load all VillagerShop...");
 		List<List<String>> listOfLines = UseCsvFiles.load("villagershop",  "plugins/ShopPlayerPNJ-FDA/saves/");
@@ -169,4 +190,5 @@ public class SaveAndLoad {
 		}
 		System.out.println("[ShopPlayerPNJ-FDA] All VillagerShop load successfully !");
 	}
+	 */
 }

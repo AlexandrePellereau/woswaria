@@ -4,7 +4,7 @@ package fr.dralexgon.shopasvillagerforplayers;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.dralexgon.shopasvillagerforplayers.database.SaveSqlite;
+import fr.dralexgon.shopasvillagerforplayers.database.SaveAndLoadSQLite;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -54,8 +54,8 @@ public class Main extends JavaPlugin {
 		getCommand("givevillagershopinfinitetrade").setExecutor(new Commands());
 		getCommand("givevillagershopkiller").setExecutor(new Commands());
 		
-		SaveAndLoad.load();
-		SaveSqlite.enable();
+		//SaveAndLoad.load();
+		SaveAndLoadSQLite.enable();
 		
 		log(Main.getText("log.enabled"));
 	}
@@ -102,8 +102,9 @@ public class Main extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		SaveAndLoad.save();
-		SaveSqlite.disable();
+		//SaveAndLoad.save();
+		SaveAndLoad.saveInventoriesVillagerShop();
+		SaveAndLoadSQLite.disable();
 
 		log(Main.getText("log.disabled"));
 	}

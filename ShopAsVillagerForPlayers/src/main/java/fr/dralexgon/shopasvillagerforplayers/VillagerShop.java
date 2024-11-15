@@ -1,10 +1,12 @@
 package fr.dralexgon.shopasvillagerforplayers;
 
+import java.io.File;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -42,14 +44,77 @@ public class VillagerShop {
 		this.villager.setGravity(true);
 		this.villager.setSilent(true);
 		this.name = name;
-		this.getVillager().setCustomName(name);
-		this.getVillager().setCustomNameVisible(true);
+		this.villager.setCustomName(name);
+		this.villager.setCustomNameVisible(true);
 		this.lastTimeUse = System.currentTimeMillis();
-		this.listLastMaxUses = new ArrayList<Integer>();
+		this.listLastMaxUses = new ArrayList<>();
 		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "§1InventoryThingsToSell");
 		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "§1InventoryThingsObtained");
 		this.hasInfiniteTrade = hasInfiniteTrade;
 		this.dead = false;
+	}
+
+	public VillagerShop(String uuid, String owner, String name, String world, Integer x, Integer z, String inventory_obtained, String inventory_to_sell, Boolean infinite_trade) {
+		/*Only used for the save*/
+		this.owner = UUID.fromString(owner);
+		this.name = name;
+		this.hasInfiniteTrade = infinite_trade;
+		Chunk chunk = Bukkit.getWorld(UUID.fromString(world)).getChunkAt(x, z);
+
+		villager = (Villager)Bukkit.getEntity(UUID.fromString(uuid));
+		if (villager == null) {
+			for(Entity entity : chunk.getEntities()) {
+				if (entity.getUniqueId().equals(uuid)) {
+					villager = (Villager)entity;
+				}
+			}
+		}
+		if (villager == null) {
+			System.out.println("[ERROR] Villager not found !");
+			return;
+		}
+
+		/*
+		this.villager.setAI(false);
+		this.villager.setGravity(true);
+		this.villager.setSilent(true);
+		this.villager.setCustomName(name);
+		this.villager.setCustomNameVisible(true);
+		this.lastTimeUse = System.currentTimeMillis();
+		this.listLastMaxUses = new ArrayList<>();
+		this.dead = false;
+		 */
+
+		Main.getInstance().getListVillagersShop().add(this);
+
+		Inventory inventoryThingsObtained = Bukkit.createInventory(null, 3*9);
+		Inventory inventoryThingsToSell = Bukkit.createInventory(null, 3*9);
+
+		File saveInventory = new File("plugins/ShopPlayerPNJ-FDA/saves/" +"saveItemstacks"+ ".yml");
+		FileConfiguration saveInventoryConfig = YamlConfiguration.loadConfiguration(saveInventory);
+		boolean hasFinish = false;
+		int i = 0;
+		while (!hasFinish) {
+			try {
+				inventoryThingsObtained.addItem(saveInventoryConfig.getItemStack(UUID.fromString(inventory_obtained)+"."+i));
+				i++;
+			} catch (Exception e) {
+				hasFinish = true;
+			}
+		}
+		hasFinish = false;
+		i = 0;
+		while (!hasFinish) {
+			try {
+				inventoryThingsToSell.addItem(saveInventoryConfig.getItemStack(UUID.fromString(inventory_to_sell)+"."+i));
+				i++;
+			} catch (Exception e) {
+				hasFinish = true;
+			}
+		}
+
+		this.setInventoryThingsObtained(inventoryThingsObtained);
+		this.setInventoryThingsToSell(inventoryThingsToSell);
 	}
 	
 	public boolean isDead() {
