@@ -12,5 +12,12 @@ commands:
   giveskinvillagershop:
     success:
       part1: "§eVous avez bien reçu un skin de "
-      part2: "§e pour votre marchand !"
-    error: "§cCe métier n'existe pas !"
+      part2: "§e pour votre VillagerShop !"
+    error: §cCe métier n'existe pas !
+  givevillagershop:
+    success: §eVous avez bien reçu un VillagerShop !
+  givevillagershopinfinitetrade:
+    success: §eVous avez bien reçu un VillagerShopInfinitetrade !
+  givevillagershopkiller:
+    success: §eVous avez bien reçu un VillagerShopKiller ! (Faites un clic droit sur un VillagerShop pour le tuer)
+    lore: §7Faites un clic droit sur un VillegerShop pour le tuer

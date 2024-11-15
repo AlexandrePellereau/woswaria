@@ -11,7 +11,7 @@ import org.bukkit.entity.Villager.Profession;
 public class TabCompletionSkinVillagerShop implements TabCompleter{
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String arg2, String[] arg3) {
-		List<String> listStringProfession = new ArrayList<String>();
+		List<String> listStringProfession = new ArrayList<>();
 		for (Profession profession : Profession.values()) {
 			listStringProfession.add(profession+"");
 		}

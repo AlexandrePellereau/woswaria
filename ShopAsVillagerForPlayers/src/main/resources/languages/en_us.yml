@@ -12,5 +12,12 @@ commands:
   giveskinvillagershop:
     success:
       part1: "§eYou have received a skin of "
-      part2: "§e for your merchant !"
-    error: "§cThis job does not exist !"
+      part2: "§e for your VillagerShop !"
+    error: §cThis job does not exist !
+  givevillagershop:
+    success: §eYou have received a VillagerShop !
+  givevillagershopinfinitetrade:
+    success: §eYou have received a VillagerShopInfinitetrade !
+  givevillagershopkiller:
+    success: §eYou have received a VillagerShopKiller ! (Right click on a VillagerShop to kill it)
+    lore: §7Right click on a VillagerShop to kill it
