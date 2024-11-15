@@ -117,7 +117,7 @@ public class ListenersGUI implements Listener {
 						ItemStack inputTrade2 = inventory.getItem(9*2+3);
 						ItemStack outputTrade = inventory.getItem(9*2+7);
 						if (inputTrade != null && outputTrade != null) {
-							main.addTrade(villagerShop.getVillager(), inputTrade, inputTrade2, outputTrade);
+							VillagerShop.addTrade(villagerShop.getVillager(), inputTrade, inputTrade2, outputTrade);
 						}
 						player.closeInventory();
 					}

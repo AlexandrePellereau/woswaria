@@ -2,7 +2,7 @@ name: ShopAsVillagerForPlayers
 version: '${version}'
 author: Dralexgon
 main: fr.dralexgon.shopasvillagerforplayers.Main
-api-version: 1.20
+api-version: 1.21
 commands:
   givevillagershop:
     description: This command give a spawn egg of VillagerShop.

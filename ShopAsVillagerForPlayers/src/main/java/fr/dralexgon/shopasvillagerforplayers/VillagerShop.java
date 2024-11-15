@@ -3,6 +3,7 @@ package fr.dralexgon.shopasvillagerforplayers;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -146,7 +147,7 @@ public class VillagerShop {
 			try {
 				int nbTrade = trade.getUses();
 				for (int j = 0; j < nbTrade; j++) {
-					Main.getInstance().removeInventory(this.getInventoryThingsToSell(), trade.getResult().getType(), trade.getResult().getAmount());
+					removeInventory(this.getInventoryThingsToSell(), trade.getResult().getType(), trade.getResult().getAmount());
 					this.getInventoryThingsObtained().addItem(trade.getIngredients().get(0));
 					try {
 						this.getInventoryThingsObtained().addItem(trade.getIngredients().get(1));
@@ -161,4 +162,33 @@ public class VillagerShop {
 		}
 	}
 
+	private static boolean removeInventory(Inventory inventory, Material type, int nb) {
+		int nbMissing = nb;
+		for (ItemStack itemStack : inventory.getContents()) {
+			if (itemStack!=null) {
+				if (itemStack.getType()==type) {
+					if (itemStack.getAmount()>=nbMissing) {
+						itemStack.setAmount(itemStack.getAmount()-nb);
+						return true;
+					}else {
+						nbMissing-=itemStack.getAmount();
+						itemStack.setAmount(0);
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public static void addTrade(Villager villager, ItemStack inputTrade, ItemStack inputTrade2, ItemStack outputTrade) {
+		List<MerchantRecipe> tempListOfRecipes = new ArrayList<>(villager.getRecipes());
+		MerchantRecipe newTrade = new MerchantRecipe(outputTrade.clone(),0);
+		newTrade.addIngredient(inputTrade.clone());
+		if (inputTrade2 != null) {
+			newTrade.addIngredient(inputTrade2.clone());
+		}
+		newTrade.setExperienceReward(false);
+		tempListOfRecipes.add(newTrade);
+		villager.setRecipes(tempListOfRecipes);
+	}
 }

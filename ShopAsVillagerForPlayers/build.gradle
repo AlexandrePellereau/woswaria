@@ -51,4 +51,4 @@ processResources {
 }
 
 // Change it to your server test directory
-setLibsDirName(getLayout().getBuildDirectory().dir("libs").get().getAsFile().getAbsolutePath() + "/testserver/server/plugins/")
+setLibsDirName(getLayout().getBuildDirectory().get().getAsFile().getAbsolutePath() + "/testserver/plugins/")
