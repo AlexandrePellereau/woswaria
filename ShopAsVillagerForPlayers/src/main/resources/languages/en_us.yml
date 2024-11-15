@@ -1,4 +1,10 @@
-name: ShopAsVillagerForPlayers
+plugin:
+  name: ShopAsVillagerForPlayers
 log:
   enabled: Enabled !
   disabled: Disabled !
+villagershop:
+  defaultname: "§eMerchant of "#I put " to see the blank space. It's not mandatory
+gui:
+  inventorythingstosell: §1InventoryThingsToSell
+  inventorythingstobuy: §1InventoryThingsToBuy

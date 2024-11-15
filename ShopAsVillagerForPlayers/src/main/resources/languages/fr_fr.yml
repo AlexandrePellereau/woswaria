@@ -1,4 +1,7 @@
-name: ShopAsVillagerForPlayers
+plugin:
+  name: ShopAsVillagerForPlayers
 log:
   enabled: Activé !
   disabled: Désactivé !
+villagershop:
+  defaultname: "§eMarchant de "#I put " to see the blank space. It's not mandatory

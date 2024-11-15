@@ -20,30 +20,21 @@ public class VillagerShop {
 	private Inventory inventoryThingsToSell;
 	private Inventory inventoryThingsObtained;
 	private long lastTimeUse;
-	private List<Integer> listLastMaxeUses;
+	private List<Integer> listLastMaxUses;
 	private boolean hasInfiniteTrade;
 	private boolean dead;
 	
 	public VillagerShop(UUID owner, Villager villager, boolean hasInfiniteTrade) {
-		this.owner = owner;
-		this.villager = villager;
-		this.villager.setAI(false);
-		this.villager.setGravity(true);
-		this.villager.setSilent(true);
-		//this.villager.setInvulnerable(true);
-		this.name = "§eMarchant de "+Bukkit.getPlayer(owner).getName();
-		this.getVillager().setCustomName("§eMarchant de "+Bukkit.getPlayer(owner).getName());
-		this.getVillager().setCustomNameVisible(true);
-		this.lastTimeUse = System.currentTimeMillis();
-		this.listLastMaxeUses = new ArrayList<Integer>();
-		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "§1InventoryThingsToSell");
-		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "§1InventoryThingsObtained");
-		this.hasInfiniteTrade = hasInfiniteTrade;
-		this.dead = false;
+		name = Main.getText("villagershop.defaultname") + Bukkit.getPlayer(owner).getName();
+		setDefaultValues(owner, name, villager, hasInfiniteTrade);
 	}
 
 	public VillagerShop(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
 		/*Only used for the save*/
+		setDefaultValues(owner, name, villager, hasInfiniteTrade);
+	}
+
+	public void setDefaultValues(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
 		this.owner = owner;
 		this.villager = villager;
 		this.villager.setAI(false);
@@ -53,7 +44,7 @@ public class VillagerShop {
 		this.getVillager().setCustomName(name);
 		this.getVillager().setCustomNameVisible(true);
 		this.lastTimeUse = System.currentTimeMillis();
-		this.listLastMaxeUses = new ArrayList<Integer>();
+		this.listLastMaxUses = new ArrayList<Integer>();
 		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "§1InventoryThingsToSell");
 		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "§1InventoryThingsObtained");
 		this.hasInfiniteTrade = hasInfiniteTrade;
@@ -89,16 +80,16 @@ public class VillagerShop {
 		return this.name;
 	}
 	
-	public List<Integer> getListLastMaxeUses() {
-		return this.listLastMaxeUses;
+	public List<Integer> getListLastMaxUses() {
+		return this.listLastMaxUses;
 	}
 	
 	public boolean hasInfiniteTrade() {
 		return this.hasInfiniteTrade;
 	}
 	
-	public void setListLastMaxeUses(List<Integer> listLastMaxeUses) {
-		this.listLastMaxeUses = listLastMaxeUses;
+	public void setListLastMaxUses(List<Integer> listLastMaxUses) {
+		this.listLastMaxUses = listLastMaxUses;
 	}
 	
 	public void setInventoryThingsToSell(Inventory inventory) {
@@ -121,7 +112,7 @@ public class VillagerShop {
 	
 	public void updateMaxUses() {
 		this.updateInventories();
-		this.setListLastMaxeUses(new ArrayList<>());
+		this.setListLastMaxUses(new ArrayList<>());
 		for (MerchantRecipe trade : this.getVillager().getRecipes()) {
 			if (hasInfiniteTrade) {
 				trade.setMaxUses(64*4*9);
@@ -134,7 +125,7 @@ public class VillagerShop {
 						}
 					}
 				}
-				this.getListLastMaxeUses().add(Math.floorDiv(nbItem, trade.getResult().getAmount()));
+				this.getListLastMaxUses().add(Math.floorDiv(nbItem, trade.getResult().getAmount()));
 				trade.setMaxUses(Math.floorDiv(nbItem, trade.getResult().getAmount()));
 				trade.setUses(0);
 			}
@@ -142,11 +133,10 @@ public class VillagerShop {
 	}
 	
 	public void updateInventories() {
-		int i = 0;
 		for (MerchantRecipe trade : this.getVillager().getRecipes()) {
 			try {
 				int nbTrade = trade.getUses();
-				for (int j = 0; j < nbTrade; j++) {
+				for (int i = 0; i < nbTrade; i++) {
 					removeInventory(this.getInventoryThingsToSell(), trade.getResult().getType(), trade.getResult().getAmount());
 					this.getInventoryThingsObtained().addItem(trade.getIngredients().get(0));
 					try {
@@ -158,7 +148,6 @@ public class VillagerShop {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-			i++;
 		}
 	}
 
@@ -170,7 +159,7 @@ public class VillagerShop {
 					if (itemStack.getAmount()>=nbMissing) {
 						itemStack.setAmount(itemStack.getAmount()-nb);
 						return true;
-					}else {
+					} else {
 						nbMissing-=itemStack.getAmount();
 						itemStack.setAmount(0);
 					}
