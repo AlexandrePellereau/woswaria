@@ -2,6 +2,7 @@ package fr.dralexgon.shopasvillagerforplayers.commands;
 
 import java.util.Arrays;
 
+import fr.dralexgon.shopasvillagerforplayers.Main;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
 
 public class CommandGiveSkinVillagerShop implements CommandExecutor{
 	@Override
@@ -26,9 +26,10 @@ public class CommandGiveSkinVillagerShop implements CommandExecutor{
 				item.setItemMeta(itemMeta);
 				player.getInventory().addItem(item);
 				player.updateInventory();
-				player.sendMessage("§eVous avez bien re§u un skin de "+arguments[0]+" !");
+				player.sendMessage(Main.getText("commands.giveskinvillagershop.success.part1") + arguments[0] +
+						Main.getText("commands.giveskinvillagershop.success.part2"));
 			} catch (Exception e) {
-				player.sendMessage("§cCe m§tier n'existe pas !");
+				player.sendMessage(Main.getText("commands.giveskinvillagershop.error"));
 			}
 		}
 		return false;

@@ -8,3 +8,9 @@ villagershop:
 gui:
   inventorythingstosell: §1InventoryThingsToSell
   inventorythingstobuy: §1InventoryThingsToBuy
+commands:
+  giveskinvillagershop:
+    success:
+      part1: "§eYou have received a skin of "
+      part2: "§e for your merchant !"
+    error: "§cThis job does not exist !"

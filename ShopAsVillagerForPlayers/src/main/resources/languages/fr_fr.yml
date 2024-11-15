@@ -8,3 +8,9 @@ villagershop:
 gui:
   inventorythingstosell: §1InventoryThingsToSell
   inventorythingstobuy: §1InventoryThingsToBuy
+commands:
+  giveskinvillagershop:
+    success:
+      part1: "§eVous avez bien reçu un skin de "
+      part2: "§e pour votre marchand !"
+    error: "§cCe métier n'existe pas !"

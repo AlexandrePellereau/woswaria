@@ -16,16 +16,10 @@ public class MultiLanguage {
             main.getDataFolder().mkdirs();
         }
 
-        saveResourceIfNotExists("languages/fr_fr.yml");
-        saveResourceIfNotExists("languages/en_us.yml");
+        main.saveResource("languages/fr_fr.yml", true);
+        main.saveResource("languages/en_us.yml", true);
 
         return loadLanguageFile("languages/" + main.getConfig().getString("language") + ".yml");
-    }
-
-    private static void saveResourceIfNotExists(String resourceName) {
-        if (!new File(main.getDataFolder(), resourceName).exists()) {
-            main.saveResource(resourceName, false);
-        }
     }
 
     private static FileConfiguration loadLanguageFile(String fileName) {
