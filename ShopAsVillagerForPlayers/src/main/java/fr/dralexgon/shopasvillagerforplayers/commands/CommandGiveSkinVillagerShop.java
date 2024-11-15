@@ -21,14 +21,14 @@ public class CommandGiveSkinVillagerShop implements CommandExecutor{
 				Profession.valueOf(arguments[0]);
 				ItemStack item = new ItemStack(Material.LEATHER_CHESTPLATE,1);
 				ItemMeta itemMeta = item.getItemMeta();
-				itemMeta.setDisplayName("§9SkinVillagerShop");
+				itemMeta.setDisplayName("Â§9SkinVillagerShop");
 				itemMeta.setLore(Arrays.asList(arguments[0]));
 				item.setItemMeta(itemMeta);
 				player.getInventory().addItem(item);
 				player.updateInventory();
-				player.sendMessage("§eVous avez bien reçu un skin de "+arguments[0]+" !");
+				player.sendMessage("Â§eVous avez bien reÂ§u un skin de "+arguments[0]+" !");
 			} catch (Exception e) {
-				player.sendMessage("§cCe métier n'existe pas !");
+				player.sendMessage("Â§cCe mÂ§tier n'existe pas !");
 			}
 		}
 		return false;

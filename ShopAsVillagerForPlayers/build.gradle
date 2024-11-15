@@ -50,4 +50,4 @@ processResources {
     }
 }
 
-setLibsDirName("D:/Minecraft/WoswariaServer/server/plugins/")
+//setLibsDirName("D:/Minecraft/WoswariaServer/server/plugins/")

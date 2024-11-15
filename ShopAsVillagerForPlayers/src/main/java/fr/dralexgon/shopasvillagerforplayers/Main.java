@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import fr.dralexgon.shopasvillagerforplayers.database.SaveSqlite;
 import org.bukkit.Material;
 import org.bukkit.entity.Villager;
 import org.bukkit.plugin.PluginManager;
@@ -29,7 +30,7 @@ public class Main extends JavaPlugin {
 	private List<VillagerShop> listVillagersShopInactive;
 	private Gui gui;
 	private UseCsvFiles useCsvFiles;
-	private List<List<Objects>> tempVariables;
+	private List<List<Object>> tempVariables;
 	private long expirationTime;
 	private static Main instance;
 	
@@ -55,6 +56,7 @@ public class Main extends JavaPlugin {
 		getCommand("givevillagershopkiller").setExecutor(new Commands());
 		
 		SaveAndLoad.load();
+		SaveSqlite.enable();
 		
 		System.out.println("[ShopPlayerPNJ-FDA] Enabled !");
 	}
@@ -79,7 +81,7 @@ public class Main extends JavaPlugin {
 		return this.useCsvFiles;
 	}
 	
-	public List<List<Objects>> getTempVariables() {
+	public List<List<Object>> getTempVariables() {
 		return this.tempVariables;
 	}
 	
@@ -122,6 +124,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		SaveAndLoad.save();
+		SaveSqlite.disable();
 		System.out.println("[ShopPlayerPNJ-FDA] Disabled !");
 	}
 }

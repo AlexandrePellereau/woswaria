@@ -7,9 +7,9 @@ import java.sql.SQLException;
 
 public class SaveSqlite {
 
-    VillagerShopDatabase villagerShopDatabase;
+    private static VillagerShopDatabase villagerShopDatabase;
 
-    public void enable() {
+    public static void enable() {
         try {
             if (!Main.getInstance().getDataFolder().exists()) {
                 Main.getInstance().getDataFolder().mkdir();
@@ -23,7 +23,7 @@ public class SaveSqlite {
         }
     }
 
-    public void disable() {
+    public static void disable() {
         try {
             villagerShopDatabase.closeConnection();
         } catch (SQLException e) {

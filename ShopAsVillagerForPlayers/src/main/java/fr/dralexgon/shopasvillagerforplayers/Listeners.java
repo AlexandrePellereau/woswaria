@@ -180,7 +180,7 @@ public class Listeners implements Listener {
 	public void onVillagerShopKiller(PlayerInteractAtEntityEvent event) {
 		if (event.getRightClicked() instanceof Villager) {
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("§cVillagerShopKiller")) {
+			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("Â§cVillagerShopKiller")) {
 				Player player = event.getPlayer();
 				Villager villager = (Villager)event.getRightClicked();
 				for (VillagerShop villagerShop : main.getListVillagersShop()) {
@@ -217,7 +217,7 @@ public class Listeners implements Listener {
 											itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
 										}
 									} else {
-										player.sendMessage(ChatColor.RED + "Ce VillagerShop a déjà ce skin.");
+										player.sendMessage(ChatColor.RED + "Ce VillagerShop a dÂ§jÂ§ ce skin.");
 									}
 									return;
 								}

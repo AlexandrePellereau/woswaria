@@ -30,13 +30,13 @@ public class VillagerShop {
 		this.villager.setGravity(true);
 		this.villager.setSilent(true);
 		//this.villager.setInvulnerable(true);
-		this.name = "§eMarchant de "+Bukkit.getPlayer(owner).getName();
-		this.getVillager().setCustomName("§eMarchant de "+Bukkit.getPlayer(owner).getName());
+		this.name = "Â§eMarchant de "+Bukkit.getPlayer(owner).getName();
+		this.getVillager().setCustomName("Â§eMarchant de "+Bukkit.getPlayer(owner).getName());
 		this.getVillager().setCustomNameVisible(true);
 		this.lastTimeUse = System.currentTimeMillis();
 		this.listLastMaxeUses = new ArrayList<Integer>();
-		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "§1InventoryThingsToSell");
-		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "§1InventoryThingsObtained");
+		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "Â§1InventoryThingsToSell");
+		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "Â§1InventoryThingsObtained");
 		this.hasInfiniteTrade = hasInfiniteTrade;
 		this.dead = false;
 	}
@@ -53,8 +53,8 @@ public class VillagerShop {
 		this.getVillager().setCustomNameVisible(true);
 		this.lastTimeUse = System.currentTimeMillis();
 		this.listLastMaxeUses = new ArrayList<Integer>();
-		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "§1InventoryThingsToSell");
-		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "§1InventoryThingsObtained");
+		this.inventoryThingsToSell = Bukkit.createInventory(null, 3*9, "Â§1InventoryThingsToSell");
+		this.inventoryThingsObtained = Bukkit.createInventory(null, 3*9, "Â§1InventoryThingsObtained");
 		this.hasInfiniteTrade = hasInfiniteTrade;
 		this.dead = false;
 	}
