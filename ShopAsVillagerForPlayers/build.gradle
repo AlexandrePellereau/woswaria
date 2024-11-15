@@ -18,7 +18,10 @@ repositories {
 }
 
 dependencies {
+    //Spigot API for Minecraft 1.20.2
     compileOnly "org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT"
+    //SQlite JDBC driver
+    implementation 'org.xerial:sqlite-jdbc:3.7.2'
 }
 
 def targetJavaVersion = 17
@@ -45,10 +48,6 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
-    /*
-    filesMatching('**') {
-        expand props
-    }*/
 }
 
 setLibsDirName("D:/Minecraft/WoswariaServer/server/plugins/")
