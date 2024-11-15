@@ -3,6 +3,7 @@ package fr.dralexgon.shopasvillagerforplayers;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
@@ -25,7 +26,7 @@ public class VillagerShop {
 	private boolean dead;
 	
 	public VillagerShop(UUID owner, Villager villager, boolean hasInfiniteTrade) {
-		name = Main.getText("villagershop.defaultname") + Bukkit.getPlayer(owner).getName();
+		name = ChatColor.YELLOW + Main.getText("villagershop.defaultname") + Bukkit.getPlayer(owner).getName();
 		setDefaultValues(owner, name, villager, hasInfiniteTrade);
 	}
 

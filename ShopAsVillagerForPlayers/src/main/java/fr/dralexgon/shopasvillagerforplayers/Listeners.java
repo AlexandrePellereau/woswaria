@@ -180,7 +180,7 @@ public class Listeners implements Listener {
 	public void onVillagerShopKiller(PlayerInteractAtEntityEvent event) {
 		if (event.getRightClicked() instanceof Villager) {
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals("§cVillagerShopKiller")) {
+			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(ChatColor.RED + "VillagerShopKiller")) {
 				Player player = event.getPlayer();
 				Villager villager = (Villager)event.getRightClicked();
 				for (VillagerShop villagerShop : main.getListVillagersShop()) {
@@ -217,7 +217,7 @@ public class Listeners implements Listener {
 											itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
 										}
 									} else {
-										player.sendMessage(ChatColor.RED + "Ce VillagerShop a d§j§ ce skin.");
+										player.sendMessage(ChatColor.RED + Main.getText("error.alreadyhavesameskin"));
 									}
 									return;
 								}
@@ -231,7 +231,7 @@ public class Listeners implements Listener {
 					villagerShop.updateMaxUses();
 					if (villagerShop.getOwner().equals(player.getUniqueId())) {
 						if (villager.getRecipes().size() == 0) {
-							player.sendMessage(ChatColor.YELLOW+"Clique gauche sur le villageois pour ajouter un ?change !");
+							player.sendMessage(ChatColor.YELLOW + Main.getText("error.notrade"));
 						}
 					}
 				}
@@ -276,14 +276,14 @@ public class Listeners implements Listener {
 			if (Math.random()*100 <= main.getConfig().getDouble("drop_egg")) {
 				ItemStack item = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
 				ItemMeta itemMeta = item.getItemMeta();
-				itemMeta.setDisplayName("?eVillagerShop");
+				itemMeta.setDisplayName(ChatColor.YELLOW + "VillagerShop");
 				item.setItemMeta(itemMeta);
 				villager.getWorld().dropItem(villager.getLocation(), item);
 			}
 			if (Math.random()*100 <= main.getConfig().getDouble("drop_skin")) {
 				ItemStack item = new ItemStack(Material.LEATHER_CHESTPLATE,1);
 				ItemMeta itemMeta = item.getItemMeta();
-				itemMeta.setDisplayName("?9SkinVillagerShop");
+				itemMeta.setDisplayName(ChatColor.BLUE + "SkinVillagerShop");
 				itemMeta.setLore(Arrays.asList(villager.getProfession().name()));
 				item.setItemMeta(itemMeta);
 				villager.getWorld().dropItem(villager.getLocation(), item);
@@ -294,7 +294,7 @@ public class Listeners implements Listener {
 	@EventHandler
 	public void onInventoryCloseEvent(InventoryCloseEvent event) {
 		Player player = (Player)event.getPlayer();
-		if (event.getView().getTitle().equals("?eShopPlayerPNJ_NewTrade")) {
+		if (event.getView().getTitle().equals(ChatColor.BLUE + Main.getText("gui.newtrade.title"))) {
 			ItemStack itemstack1 = event.getView().getTopInventory().getContents()[9*2+1];
 			ItemStack itemstack2 = event.getView().getTopInventory().getContents()[9*2+3];
 			ItemStack itemstack3 = event.getView().getTopInventory().getContents()[9*2+7];

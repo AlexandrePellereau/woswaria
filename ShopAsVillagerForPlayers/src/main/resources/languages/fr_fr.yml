@@ -4,10 +4,42 @@ log:
   enabled: Activé !
   disabled: Désactivé !
 villagershop:
-  defaultname: "§eMarchant de "#I put " to see the blank space. It's not mandatory
+  defaultname: "VillagerShop de "#I put " to see the blank space. It's not mandatory
+
 gui:
-  inventorythingstosell: §1InventoryThingsToSell
-  inventorythingstobuy: §1InventoryThingsToBuy
+  mainmenu:
+    title: SAVFPGUI_MainMenu
+    items:
+      addtrade: Ajouter un échange
+      renamevillagershop: Renommer le VillagerShop
+      deletetrade: Supprimer un échange
+      storageitemstosell: Stockage des items à vendre
+      storageitemsreceived: Stockage des items reçus
+      deletevillagershop: Supprimer le VillagerShop
+  newtrade:
+    title: SAVFPGUI_NewTrade
+    items:
+      toreceive1: Objet1 à recevoir (Obligatoire)
+      toreceive2: Objet2 à recevoir (Pas obligatoire)
+      tosell1: Objet à vendre (Obligatoire)
+      arrow: --->
+      submit: Valider
+  confirmdelete:
+    title: SAVFPGUI_ConfirmDelete
+    items:
+      delete: Supprimer
+      cancel: Annuler
+  deletetrade:
+    title: SAVFPGUI_DeleteTrade
+    items:
+      previoustrade: Echange précédent
+      nexttrade: Echange suivant
+      deletetrade: Supprimer l'échange
+  inventorythingstosell:
+    title: SAVFPGUI_InventoryThingsToSell
+  inventorythingstobuy:
+    title: SAVFPGUI_InventoryThingsToBuy
+
 commands:
   giveskinvillagershop:
     success:
@@ -21,3 +53,17 @@ commands:
   givevillagershopkiller:
     success: §eVous avez bien reçu un VillagerShopKiller ! (Faites un clic droit sur un VillagerShop pour le tuer)
     lore: §7Faites un clic droit sur un VillegerShop pour le tuer
+
+error:
+  alreadyhavesameskin: Ce VillagerShop a déjà le même skin !
+  notrade: Clique gauche sur le villageois pour ajouter un échange !
+  notrade2: Ce VillagerShop n'a aucun échange !
+  timeoutrenamevillagershop: Délai dépassé pour renommer le VillagerShop. Veuillez réessayer.
+  invalidname:
+    part1: "Le nom d'un VillagerShop doit être entre "
+    part2: " et "
+    part3: " caractères."
+
+message:
+  renamevillagershop: Ecris le nom dans le chat (avant 60s)
+  renamesuccess: "Le VillagerShop a bien été renommé en "

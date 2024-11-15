@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.dralexgon.shopasvillagerforplayers.database.SaveSqlite;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,9 +33,11 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		saveDefaultConfig();
 		Main.instance = this;
-		
+
+		saveDefaultConfig();
+		languageConfig = MultiLanguage.enable();
+
 		this.expirationTime = 1000L *60*60*24*365;
 		this.listVillagersShop = new ArrayList<>();
 		this.listVillagersShopInactive = new ArrayList<>();
@@ -53,7 +56,6 @@ public class Main extends JavaPlugin {
 		
 		SaveAndLoad.load();
 		SaveSqlite.enable();
-		languageConfig = MultiLanguage.enable();
 		
 		log(Main.getText("log.enabled"));
 	}
@@ -67,7 +69,11 @@ public class Main extends JavaPlugin {
 	}
 
 	public static String getText(String key) {
-		return languageConfig.getString(key);
+		String text = languageConfig.getString(key);
+		if (text == null || text.isEmpty() || text.equals("null")) {
+			text = ChatColor.RED + "[" + key + " not found]";
+		}
+		return text;
 	}
 	
 	public List<VillagerShop> getListVillagersShop() {

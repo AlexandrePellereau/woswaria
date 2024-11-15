@@ -25,7 +25,7 @@ public class Commands implements CommandExecutor{
 			itemMeta.setDisplayName("§eVillagerShop");
 			item.setItemMeta(itemMeta);
 			player.getInventory().addItem(item);
-			player.sendMessage(Main.getText("commands.givevillagershop"));
+			player.sendMessage(Main.getText("commands.givevillagershop.success"));
 			break;
 		case "givevillagershopinfinitetrade":
 			ItemStack item2 = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
@@ -33,7 +33,7 @@ public class Commands implements CommandExecutor{
 			itemMeta2.setDisplayName("§eVillagerShopInfiniteTrade");
 			item2.setItemMeta(itemMeta2);
 			player.getInventory().addItem(item2);
-			player.sendMessage(Main.getText("commands.givevillagershopinfinitetrade"));
+			player.sendMessage(Main.getText("commands.givevillagershopinfinitetrade.success"));
 			break;
 		case "givevillagershopkiller":
 			ItemStack item3 = new ItemStack(Material.BONE,1);
@@ -42,7 +42,7 @@ public class Commands implements CommandExecutor{
 			itemMeta3.setLore(Arrays.asList(Main.getText("commands.givevillagershopkiller.lore")));
 			item3.setItemMeta(itemMeta3);
 			player.getInventory().addItem(item3);
-			player.sendMessage(Main.getText("commands.givevillagershopinfinitetrade"));
+			player.sendMessage(Main.getText("commands.givevillagershopinfinitetrade.success"));
 			break;
 		}
 		return false;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -52,66 +53,61 @@ public class Gui {
 		playerHead.setItemMeta(playerHeadMeta);
 		return playerHead;
 	}
+
+	public void fillInventory(Inventory inventory) {
+		for (int i = 0; i < inventory.getSize(); i++) {
+			inventory.setItem(i,this.customItem(Material.BLACK_STAINED_GLASS_PANE, ChatColor.BLACK.toString()));
+		}
+	}
 	
 	public void startMainMenu(Player player) {
 		int size = 5;
-		Inventory inventory = Bukkit.createInventory(null, size*9, "§eShopPlayerPNJ_MainMenu");
-			
-		for (int i = 0; i < size*9; i++) {
-			inventory.setItem(i,this.customItem(Material.BLACK_STAINED_GLASS_PANE,"§0"));
-		}
+		Inventory inventory = Bukkit.createInventory(null, size*9, ChatColor.BLUE + Main.getText("gui.mainmenu.title"));
+		fillInventory(inventory);
 		
-		inventory.setItem(9*1+1,this.customItem(Material.EMERALD,"Ajouter un echange"));
-		inventory.setItem(9*1+4,this.customItem(Material.NAME_TAG,"Renommer"));
-		inventory.setItem(9*1+7,this.customItem(Material.REDSTONE,"Supprimer un echange"));
-		inventory.setItem(9*3+1,this.customItem(Material.CHEST,"Stockage des objets § vendre"));
-		inventory.setItem(9*3+4,this.customItem(Material.ENDER_CHEST,"Stockage des objets reçus"));
-		inventory.setItem(9*3+7,this.customItem(Material.BONE,"Supprimer le pnj"));
-		
+		inventory.setItem(9*1+1,this.customItem(Material.EMERALD, ChatColor.GREEN + Main.getText("gui.mainmenu.items.addtrade")));
+		inventory.setItem(9*1+4,this.customItem(Material.NAME_TAG, ChatColor.YELLOW + Main.getText("gui.mainmenu.items.renamevillagershop")));
+		inventory.setItem(9*1+7,this.customItem(Material.REDSTONE, ChatColor.RED + Main.getText("gui.mainmenu.items.deletetrade")));
+		inventory.setItem(9*3+1,this.customItem(Material.CHEST, ChatColor.GOLD + Main.getText("gui.mainmenu.items.storageitemstosell")));
+		inventory.setItem(9*3+4,this.customItem(Material.ENDER_CHEST, ChatColor.GOLD + Main.getText("gui.mainmenu.items.storageitemsreceived")));
+		inventory.setItem(9*3+7,this.customItem(Material.BONE, ChatColor.RED + Main.getText("gui.mainmenu.items.deletevillagershop")));
+
 		player.openInventory(inventory);
 	}
 	
 	public void startNewTrade(Player player) {
 		int size = 6;
-		Inventory inventory = Bukkit.createInventory(null, size*9, "§eShopPlayerPNJ_NewTrade");
-			
-		for (int i = 0; i < size*9; i++) {
-			inventory.setItem(i,this.customItem(Material.BLACK_STAINED_GLASS_PANE,"§"));
-		}
+		Inventory inventory = Bukkit.createInventory(null, size*9, ChatColor.BLUE + Main.getText("gui.newtrade.title"));
+		fillInventory(inventory);
 		
-		inventory.setItem(9*1+1,this.customItem(Material.PAPER,"Objet1 à recevoir (Obligatoire)"));
-		inventory.setItem(9*1+3,this.customItem(Material.PAPER,"Objet2 à recevoir (Pas Obligatoire)"));
-		inventory.setItem(9*1+7,this.customItem(Material.PAPER,"Objet à vendre (Obligatoire)"));
+		inventory.setItem(9*1+1,this.customItem(Material.PAPER, Main.getText("gui.newtrade.items.toreceive1")));
+		inventory.setItem(9*1+3,this.customItem(Material.PAPER, Main.getText("gui.newtrade.items.toreceive2")));
+		inventory.setItem(9*1+7,this.customItem(Material.PAPER, Main.getText("gui.newtrade.items.tosell1")));
 		
 		inventory.setItem(9*2+1,null);
 		inventory.setItem(9*2+3,null);
-		inventory.setItem(9*2+5,this.customItem(Material.MAGENTA_GLAZED_TERRACOTTA,"--->"));
+		inventory.setItem(9*2+5,this.customItem(Material.MAGENTA_GLAZED_TERRACOTTA, Main.getText("gui.arrow")));
 		inventory.setItem(9*2+7,null);
-		inventory.setItem(9*4+4,this.customItem(Material.GREEN_CONCRETE,"Valider"));
+		inventory.setItem(9*4+4,this.customItem(Material.GREEN_CONCRETE, ChatColor.GREEN + Main.getText("gui.newtrade.items.submit")));
 		
 		player.openInventory(inventory);
 	}
 	
 	public void startConfirmDelete(Player player) {
 		int size = 3;
-		Inventory inventory = Bukkit.createInventory(null, size*9, "§eShopPlayerPNJ_ConfirmDelete");
-		
-		for (int i = 0; i < 3*9; i++) {
-			inventory.setItem(i,this.customItem(Material.BLACK_STAINED_GLASS_PANE, "§"));
-		}
-		inventory.setItem(9*1+2,this.customItem(Material.GREEN_CONCRETE,"Supprimer"));
-		inventory.setItem(9*1+6,this.customItem(Material.RED_CONCRETE,"Annuler"));
+		Inventory inventory = Bukkit.createInventory(null, size*9, ChatColor.BLUE + Main.getText("gui.confirmdelete.title"));
+		fillInventory(inventory);
+
+		inventory.setItem(9*1+2,this.customItem(Material.GREEN_CONCRETE, Main.getText("gui.confirmdelete.items.delete")));
+		inventory.setItem(9*1+6,this.customItem(Material.RED_CONCRETE, Main.getText("gui.confirmdelete.items.cancel")));
 		
 		player.openInventory(inventory);
 	}
 	
 	public void startDeleteTrade(Player player) {
 		int size = 5;
-		Inventory inventory = Bukkit.createInventory(null, size*9, "§eShopPlayerPNJ_DeleteTrade");
-			
-		for (int i = 0; i < size*9; i++) {
-			inventory.setItem(i,this.customItem(Material.BLACK_STAINED_GLASS_PANE,"§0"));
-		}
+		Inventory inventory = Bukkit.createInventory(null, size*9, ChatColor.BLUE + Main.getText("gui.deletetrade.title"));
+		fillInventory(inventory);
 		
 		for (List tempVariable : main.getTempVariables()) {
 			if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
@@ -131,14 +127,14 @@ public class Gui {
 					} catch (Exception e) {
 						inventory.setItem(9*1+3,null);
 					}
-					inventory.setItem(9*1+5,this.customItem(Material.MAGENTA_GLAZED_TERRACOTTA,"--->"));
+					inventory.setItem(9*1+5,this.customItem(Material.MAGENTA_GLAZED_TERRACOTTA, Main.getText("gui.arrow")));
 					inventory.setItem(9*1+7,villagerShop.getVillager().getRecipe(indexOfCurrentRecipe).getResult());
 					if (indexOfCurrentRecipe!=0) {
-						inventory.setItem(9*3+1,this.customHead("Echange précédent","MHF_ArrowLeft"));
+						inventory.setItem(9*3+1,this.customHead(Main.getText("gui.deletetrade.items.previoustrade"),"MHF_ArrowLeft"));
 					}
-					inventory.setItem(9*3+4,this.customItem(Material.RED_CONCRETE,"Supprimer l'§change"));
+					inventory.setItem(9*3+4,this.customItem(Material.RED_CONCRETE, ChatColor.RED + Main.getText("gui.deletetrade.items.deletetrade")));
 					if (indexOfCurrentRecipe!=villagerShop.getVillager().getRecipeCount()-1) {
-						inventory.setItem(9*3+7,this.customHead("Echange suivant","MHF_ArrowRight"));
+						inventory.setItem(9*3+7,this.customHead(Main.getText("gui.deletetrade.items.nexttrade"),"MHF_ArrowRight"));
 					}
 					player.openInventory(inventory);
 					List<Object> tempList = new ArrayList<>();
@@ -147,7 +143,7 @@ public class Gui {
 					tempList.add(indexOfCurrentRecipe);
 					main.getTempVariables().add(tempList);
 				}else {
-					player.sendMessage("§cCe VillagerShop n'a pas de trade !");
+					player.sendMessage(ChatColor.RED + Main.getText("messages.notrade2"));
 				}
 				return;
 			}

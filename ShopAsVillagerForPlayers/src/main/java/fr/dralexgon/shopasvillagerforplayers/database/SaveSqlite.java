@@ -18,7 +18,7 @@ public class SaveSqlite {
             villagerShopDatabase.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("[ShopPlayerPNJ-FDA] Error when trying to connect to the database.");
+            Main.log("Error when trying to connect to the database.");
             Bukkit.getPluginManager().disablePlugin(Main.getInstance());
         }
     }
@@ -28,7 +28,7 @@ public class SaveSqlite {
             villagerShopDatabase.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
-            System.out.println("[ShopPlayerPNJ-FDA] Error when trying to close the database.");
+            Main.log("Error when trying to close the database.");
         }
     }
 }
