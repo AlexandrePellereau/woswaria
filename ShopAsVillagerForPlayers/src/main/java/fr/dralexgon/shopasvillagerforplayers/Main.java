@@ -3,6 +3,7 @@ package fr.dralexgon.shopasvillagerforplayers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Villager;
@@ -28,7 +29,7 @@ public class Main extends JavaPlugin {
 	private List<VillagerShop> listVillagersShopInactive;
 	private Gui gui;
 	private UseCsvFiles useCsvFiles;
-	private List<List> tempVariables;
+	private List<List<Objects>> tempVariables;
 	private long expirationTime;
 	private static Main instance;
 	
@@ -40,7 +41,7 @@ public class Main extends JavaPlugin {
 		this.expirationTime = 1000L *60*60*24*365;
 		this.listVillagersShop = new ArrayList<>();
 		this.listVillagersShopInactive = new ArrayList<>();
-		this.tempVariables = new ArrayList<List>();
+		this.tempVariables = new ArrayList<>();
 		this.useCsvFiles = new UseCsvFiles();
 		this.gui = new Gui(this);
 		
@@ -78,7 +79,7 @@ public class Main extends JavaPlugin {
 		return this.useCsvFiles;
 	}
 	
-	public List<List> getTempVariables() {
+	public List<List<Objects>> getTempVariables() {
 		return this.tempVariables;
 	}
 	
