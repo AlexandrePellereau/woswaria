@@ -65,7 +65,7 @@ public class Gui {
 		inventory.setItem(9*1+4,this.customItem(Material.NAME_TAG,"Renommer"));
 		inventory.setItem(9*1+7,this.customItem(Material.REDSTONE,"Supprimer un echange"));
 		inventory.setItem(9*3+1,this.customItem(Material.CHEST,"Stockage des objets § vendre"));
-		inventory.setItem(9*3+4,this.customItem(Material.ENDER_CHEST,"Stockage des objets re§us"));
+		inventory.setItem(9*3+4,this.customItem(Material.ENDER_CHEST,"Stockage des objets reçus"));
 		inventory.setItem(9*3+7,this.customItem(Material.BONE,"Supprimer le pnj"));
 		
 		player.openInventory(inventory);
@@ -79,9 +79,9 @@ public class Gui {
 			inventory.setItem(i,this.customItem(Material.BLACK_STAINED_GLASS_PANE,"§"));
 		}
 		
-		inventory.setItem(9*1+1,this.customItem(Material.PAPER,"Objet1 § recevoir (Obligatoire)"));
-		inventory.setItem(9*1+3,this.customItem(Material.PAPER,"Objet2 § recevoir (Pas Obligatoire)"));
-		inventory.setItem(9*1+7,this.customItem(Material.PAPER,"Objet § vendre (Obligatoire)"));
+		inventory.setItem(9*1+1,this.customItem(Material.PAPER,"Objet1 à recevoir (Obligatoire)"));
+		inventory.setItem(9*1+3,this.customItem(Material.PAPER,"Objet2 à recevoir (Pas Obligatoire)"));
+		inventory.setItem(9*1+7,this.customItem(Material.PAPER,"Objet à vendre (Obligatoire)"));
 		
 		inventory.setItem(9*2+1,null);
 		inventory.setItem(9*2+3,null);
@@ -134,7 +134,7 @@ public class Gui {
 					inventory.setItem(9*1+5,this.customItem(Material.MAGENTA_GLAZED_TERRACOTTA,"--->"));
 					inventory.setItem(9*1+7,villagerShop.getVillager().getRecipe(indexOfCurrentRecipe).getResult());
 					if (indexOfCurrentRecipe!=0) {
-						inventory.setItem(9*3+1,this.customHead("Echange pr§c§dent","MHF_ArrowLeft"));
+						inventory.setItem(9*3+1,this.customHead("Echange précédent","MHF_ArrowLeft"));
 					}
 					inventory.setItem(9*3+4,this.customItem(Material.RED_CONCRETE,"Supprimer l'§change"));
 					if (indexOfCurrentRecipe!=villagerShop.getVillager().getRecipeCount()-1) {

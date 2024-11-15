@@ -50,4 +50,5 @@ processResources {
     }
 }
 
-//setLibsDirName("D:/Minecraft/WoswariaServer/server/plugins/")
+// Change it to your server test directory
+setLibsDirName(getLayout().getBuildDirectory().dir("libs").get().getAsFile().getAbsolutePath() + "/testserver/server/plugins/")

@@ -47,8 +47,8 @@ public class ListenersGUI implements Listener {
 				main.getGui().startConfirmDelete(player);
 				break;
 			case "Transformer en oeuf":
-				player.sendMessage("§cEn cours de d§vellopement...");
-				for (List tempVariable : main.getTempVariables()) {
+				player.sendMessage("§cEn cours de développement...");
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
 						//Timestamp ts = new Timestamp(System.currentTimeMillis());//+main.getExpirationTime());  
@@ -64,23 +64,23 @@ public class ListenersGUI implements Listener {
 				break;
 			case "Renommer":
 				player.sendMessage("§eEcris le nom dans le chat.(avant 60s)");
-				List tempList = new ArrayList<>();
+				List<Object> tempList = new ArrayList<>();
 				tempList.add(player);
 				tempList.add("RenameVillagerShop");
 				tempList.add(System.currentTimeMillis());
 				main.getTempVariables().add(tempList);
 				player.closeInventory();
 				break;
-			case "Stockage des objets § vendre":
-				for (List tempVariable : main.getTempVariables()) {
+			case "Stockage des objets à vendre":
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
 						player.openInventory(villagerShop.getInventoryThingsToSell());
 					}
 				}
 				break;
-			case "Stockage des objets re§us":
-				for (List tempVariable : main.getTempVariables()) {
+			case "Stockage des objets reçus":
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
 						player.openInventory(villagerShop.getInventoryThingsObtained());
@@ -95,23 +95,21 @@ public class ListenersGUI implements Listener {
 			if (!item.hasItemMeta()) return;
 			switch (item.getItemMeta().getDisplayName()) {
 			case "--->":
-				event.setCancelled(true);
-				break;
 			case "§":
 				event.setCancelled(true);
 				break;
-			case "Objet1 § recevoir (Obligatoire)":
+			case "Objet1 à recevoir (Obligatoire)":
 				event.setCancelled(true);
 				break;
-			case "Objet2 § recevoir (Pas Obligatoire)":
+			case "Objet2 à recevoir (Pas Obligatoire)":
 				event.setCancelled(true);
 				break;
-			case "Objet § vendre (Obligatoire)":
+			case "Objet à vendre (Obligatoire)":
 				event.setCancelled(true);
 				break;
 			case "Valider":
 				event.setCancelled(true);
-				for (List tempVariable : main.getTempVariables()) {
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
 						Inventory inventory = event.getView().getTopInventory();
@@ -134,7 +132,7 @@ public class ListenersGUI implements Listener {
 			if (!item.hasItemMeta()) return;
 			switch (item.getItemMeta().getDisplayName()) {
 			case "Supprimer":
-				for (List tempVariable : main.getTempVariables()) {
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
 						if (player.getGameMode()!=GameMode.CREATIVE) {
@@ -181,12 +179,12 @@ public class ListenersGUI implements Listener {
 			event.setCancelled(true);
 			if (!item.hasItemMeta()) return;
 			switch (item.getItemMeta().getDisplayName()) {
-			case "Echange pr§c§dent":
-				for (List tempVariable : main.getTempVariables()) {
+			case "Echange précédent":
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("TradeSelected")) {
 						int indexOfCurrentRecipe = (int)tempVariable.get(2);
 						main.getTempVariables().remove(tempVariable);
-						List tempList = new ArrayList<>();
+						List<Object> tempList = new ArrayList<>();
 						tempList.add(player);
 						tempList.add("TradeSelected");
 						tempList.add(indexOfCurrentRecipe-1);
@@ -198,11 +196,11 @@ public class ListenersGUI implements Listener {
 				break;
 			case "Echange suivant":
 				System.out.println(main.getTempVariables());
-				for (List tempVariable : main.getTempVariables()) {
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("TradeSelected")) {
 						int indexOfCurrentRecipe = (int)tempVariable.get(2);
 						main.getTempVariables().remove(tempVariable);
-						List tempList = new ArrayList<>();
+						List<Object> tempList = new ArrayList<>();
 						tempList.add(player);
 						tempList.add("TradeSelected");
 						tempList.add(indexOfCurrentRecipe+1);
@@ -212,12 +210,12 @@ public class ListenersGUI implements Listener {
 					}
 				}
 				break;
-			case "Supprimer l'§change":
+			case "Supprimer l'échange":
 				event.setCancelled(true);
-				for (List tempVariable : main.getTempVariables()) {
+				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
-						for (List tempVariable2 : main.getTempVariables()) {
+						for (List<Object> tempVariable2 : main.getTempVariables()) {
 							if (tempVariable2.get(0)==player && tempVariable2.get(1).equals("TradeSelected")) {
 								int indexOfCurrentRecipe = (int)tempVariable2.get(2);
 								MerchantRecipe merchantRecipe = villagerShop.getVillager().getRecipe(indexOfCurrentRecipe);
@@ -235,7 +233,7 @@ public class ListenersGUI implements Listener {
 								}
 								villagerShop.getVillager().setRecipes(listOfRecipes);
 								player.closeInventory();
-								player.sendMessage("§cL'§change a bien §t§ supprim§ !");
+								player.sendMessage("§cL'échange a bien été supprimé !");
 							}
 						}
 					}
@@ -251,10 +249,10 @@ public class ListenersGUI implements Listener {
 	@EventHandler
 	public void onChat(AsyncPlayerChatEvent event) {
 		Player player = event.getPlayer();
-		for (List tempVariable : main.getTempVariables()) {
+		for (List<Object> tempVariable : main.getTempVariables()) {
 			if (tempVariable.get(0)==player && tempVariable.get(1).equals("RenameVillagerShop")) {
 				if (System.currentTimeMillis()>=(long)tempVariable.get(2)+60*1000) {
-					player.sendMessage("§cD§lai d§pass§ !");
+					player.sendMessage("§cDélai d§pass§ !");
 				}else{
 					int min = 3;
 					int max = 20;
@@ -263,10 +261,10 @@ public class ListenersGUI implements Listener {
 						max = main.getConfig().getInt("max_name_of_villagershop");
 					}
 					if (event.getMessage().length() >= min && event.getMessage().length() <= max) {
-						for (List tempVariable2 : main.getTempVariables()) {
+						for (List<Object> tempVariable2 : main.getTempVariables()) {
 							if (tempVariable2.get(0) == player && tempVariable2.get(1).equals("VillagerShopSelected")) {
 								VillagerShop villagerShop = (VillagerShop)tempVariable2.get(2);
-								player.sendMessage("§eCe marchant a bien §t§ renomm§ en "+event.getMessage());
+								player.sendMessage("§eCe marchant a bien été renommé en "+event.getMessage());
 								villagerShop.setName(event.getMessage());
 								event.setCancelled(true);
 								main.getTempVariables().remove(tempVariable);
@@ -275,7 +273,7 @@ public class ListenersGUI implements Listener {
 							}
 						}
 					}else {
-						player.sendMessage("§cLe nom d'un marchant doit §tre entre "+min+" et "+max+" caract§res.");
+						player.sendMessage("§cLe nom d'un marchant doit être entre "+min+" et "+max+" caractères.");
 					}
 					event.setCancelled(true);
 					main.getTempVariables().remove(tempVariable);
