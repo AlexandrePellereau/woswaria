@@ -3,18 +3,10 @@ package fr.dralexgon.shopasvillagerforplayers.database;
 import fr.dralexgon.shopasvillagerforplayers.Main;
 import fr.dralexgon.shopasvillagerforplayers.VillagerShop;
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
 import java.sql.*;
-import java.util.List;
-import java.util.UUID;
 
 public class SaveAndLoadSQLite {
 
@@ -35,6 +27,11 @@ public class SaveAndLoadSQLite {
                 + "inventory_obtained TEXT,"
                 + "inventory_to_sell TEXT,"
                 + "infinite_trade BOOLEAN"
+                + ")");
+        Statement statement2 = connection.createStatement();
+        statement2.execute("CREATE TABLE IF NOT EXISTS villager_shop_inventories ("
+                + "uuid TEXT,"
+                + "item BLOB"
                 + ")");
     }
 
@@ -130,8 +127,6 @@ public class SaveAndLoadSQLite {
                 resultSet.getString("world"),
                 resultSet.getInt("x"),
                 resultSet.getInt("z"),
-                resultSet.getString("inventory_obtained"),
-                resultSet.getString("inventory_to_sell"),
                 resultSet.getBoolean("infinite_trade")
         );
         return villagerShop;
@@ -148,10 +143,10 @@ public class SaveAndLoadSQLite {
                     resultSet.getString("world"),
                     resultSet.getInt("x"),
                     resultSet.getInt("z"),
-                    resultSet.getString("inventory_obtained"),
-                    resultSet.getString("inventory_to_sell"),
                     resultSet.getBoolean("infinite_trade")
             );
+            villagerShop.setInventoryObtained(instance.loadInventory(villagerShop.getVillager().getUniqueId()+"1"));
+            villagerShop.setInventoryToSell(instance.loadInventory(villagerShop.getVillager().getUniqueId()+"2"));
             Main.getInstance().getListVillagersShop().add(villagerShop);
         }
     }
@@ -161,22 +156,63 @@ public class SaveAndLoadSQLite {
             PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop");
             preparedStatement.executeUpdate();
             for (VillagerShop villagerShop : Main.getInstance().getListVillagersShop()) {
-                addVillagerShop(
-                        villagerShop.getVillager().getUniqueId().toString(),
-                        villagerShop.getOwner().toString(),
-                        villagerShop.getName(),
-                        villagerShop.getVillager().getWorld().getUID().toString(),
-                        villagerShop.getVillager().getLocation().getBlockX(),
-                        villagerShop.getVillager().getLocation().getBlockZ(),
-                        villagerShop.getVillager().getUniqueId()+"1",
-                        villagerShop.getVillager().getUniqueId()+"2",
-                        villagerShop.hasInfiniteTrade()
-                );
+                if (existsVillagerShop(villagerShop.getVillager().getUniqueId().toString())) {
+                    updateVillagerShop(
+                            villagerShop.getVillager().getUniqueId().toString(),
+                            villagerShop.getOwner().toString(),
+                            villagerShop.getName(),
+                            villagerShop.getVillager().getWorld().getUID().toString(),
+                            villagerShop.getVillager().getLocation().getBlockX(),
+                            villagerShop.getVillager().getLocation().getBlockZ(),
+                            villagerShop.getVillager().getUniqueId()+"1",
+                            villagerShop.getVillager().getUniqueId()+"2",
+                            villagerShop.hasInfiniteTrade()
+                    );
+                } else {
+                    addVillagerShop(
+                            villagerShop.getVillager().getUniqueId().toString(),
+                            villagerShop.getOwner().toString(),
+                            villagerShop.getName(),
+                            villagerShop.getVillager().getWorld().getUID().toString(),
+                            villagerShop.getVillager().getLocation().getBlockX(),
+                            villagerShop.getVillager().getLocation().getBlockZ(),
+                            villagerShop.getVillager().getUniqueId()+"1",
+                            villagerShop.getVillager().getUniqueId()+"2",
+                            villagerShop.hasInfiniteTrade()
+                    );
+                }
+                saveInventory(villagerShop.getVillager().getUniqueId()+"1", villagerShop.getInventoryObtained());
             }
         } catch (SQLException e) {
             e.printStackTrace();
             Main.log("Error when trying to save the database.");
         }
+    }
+
+    public static void saveInventory(String uuid, Inventory inventory) throws SQLException {
+        PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop_inventories WHERE uuid = ?");
+        preparedStatement.setString(1, uuid);
+        preparedStatement.executeUpdate();
+        for (ItemStack item : inventory.getContents()) {
+            if (item == null) {
+                continue;
+            }
+            preparedStatement = instance.connection.prepareStatement("INSERT INTO villager_shop_inventories (uuid, item) VALUES (?, ?)");
+            preparedStatement.setString(1, uuid);
+            preparedStatement.setBytes(2, ItemStackSerializer.serializeBytes(item));
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public Inventory loadInventory(String uuid) throws SQLException {
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM villager_shop_inventories WHERE uuid = ?");
+        preparedStatement.setString(1, uuid);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        Inventory inventory = Bukkit.createInventory(null, 27, "VillagerShop");
+        while (resultSet.next()) {
+            inventory.addItem(ItemStackSerializer.deserializeBytes(resultSet.getBytes("item")));
+        }
+        return inventory;
     }
 
     public void closeConnection() throws SQLException {

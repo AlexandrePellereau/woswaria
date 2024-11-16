@@ -54,7 +54,7 @@ public class VillagerShop {
 		this.dead = false;
 	}
 
-	public VillagerShop(String uuid, String owner, String name, String world, Integer x, Integer z, String inventory_obtained, String inventory_to_sell, Boolean infinite_trade) {
+	public VillagerShop(String uuid, String owner, String name, String world, Integer x, Integer z, Boolean infinite_trade) {
 		/*Only used for the save*/
 		this.owner = UUID.fromString(owner);
 		this.name = name;
@@ -85,36 +85,8 @@ public class VillagerShop {
 		this.dead = false;
 		 */
 
-		Main.getInstance().getListVillagersShop().add(this);
-
-		Inventory inventoryThingsObtained = Bukkit.createInventory(null, 3*9);
-		Inventory inventoryThingsToSell = Bukkit.createInventory(null, 3*9);
-
-		File saveInventory = new File("plugins/ShopPlayerPNJ-FDA/saves/" +"saveItemstacks"+ ".yml");
-		FileConfiguration saveInventoryConfig = YamlConfiguration.loadConfiguration(saveInventory);
-		boolean hasFinish = false;
-		int i = 0;
-		while (!hasFinish) {
-			try {
-				inventoryThingsObtained.addItem(saveInventoryConfig.getItemStack(UUID.fromString(inventory_obtained)+"."+i));
-				i++;
-			} catch (Exception e) {
-				hasFinish = true;
-			}
-		}
-		hasFinish = false;
-		i = 0;
-		while (!hasFinish) {
-			try {
-				inventoryThingsToSell.addItem(saveInventoryConfig.getItemStack(UUID.fromString(inventory_to_sell)+"."+i));
-				i++;
-			} catch (Exception e) {
-				hasFinish = true;
-			}
-		}
-
-		this.setInventoryThingsObtained(inventoryThingsObtained);
-		this.setInventoryThingsToSell(inventoryThingsToSell);
+		this.setInventoryObtained(inventoryThingsObtained);
+		this.setInventoryToSell(inventoryThingsToSell);
 	}
 	
 	public boolean isDead() {
@@ -158,14 +130,6 @@ public class VillagerShop {
 		this.listLastMaxUses = listLastMaxUses;
 	}
 	
-	public void setInventoryThingsToSell(Inventory inventory) {
-		this.inventoryThingsToSell = inventory;
-	}
-	
-	public void setInventoryThingsObtained(Inventory inventory) {
-		this.inventoryThingsObtained = inventory;
-	}
-	
 	public void setVillager(Villager villager) {
 		this.villager = villager;
 	}
@@ -174,6 +138,14 @@ public class VillagerShop {
 		this.name = name;
 		this.getVillager().setCustomName(name);
 		this.getVillager().setCustomNameVisible(true);
+	}
+
+	public Inventory getInventoryObtained() {
+		return this.inventoryThingsObtained;
+	}
+
+	public Inventory getInventoryToSell() {
+		return this.inventoryThingsToSell;
 	}
 	
 	public void updateMaxUses() {
@@ -246,4 +218,14 @@ public class VillagerShop {
 		tempListOfRecipes.add(newTrade);
 		villager.setRecipes(tempListOfRecipes);
 	}
+
+	public void setInventoryObtained(Inventory itemStacks) {
+		this.inventoryThingsObtained = itemStacks;
+	}
+
+	public void setInventoryToSell(Inventory itemStacks) {
+		this.inventoryThingsToSell = itemStacks;
+	}
+
+
 }

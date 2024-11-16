@@ -4,6 +4,9 @@ author: Dralexgon
 main: fr.dralexgon.shopasvillagerforplayers.Main
 api-version: 1.21
 commands:
+  test:
+    description: Test command
+    permission: test.use
   givevillagershop:
     description: This command give a spawn egg of VillagerShop.
     permission: givevillagershop.use

@@ -114,10 +114,34 @@ public class SaveAndLoad {
 					line.get(3),
 					Integer.valueOf(line.get(4)),
 					Integer.valueOf(line.get(5)),
-					line.get(6),
-					line.get(7),
 					Boolean.valueOf(line.get(8))
 			);
+
+			Inventory inventoryThingsObtained = Bukkit.createInventory(null, 3*9);
+			Inventory inventoryThingsToSell = Bukkit.createInventory(null, 3*9);
+
+			File saveInventory = new File("plugins/ShopPlayerPNJ-FDA/saves/" +"saveItemstacks"+ ".yml");
+			FileConfiguration saveInventoryConfig = YamlConfiguration.loadConfiguration(saveInventory);
+			boolean hasFinish = false;
+			int i = 0;
+			while (!hasFinish) {
+				try {
+					inventoryThingsObtained.addItem(saveInventoryConfig.getItemStack(UUID.fromString(line.get(6))+"."+i));
+					i++;
+				} catch (Exception e) {
+					hasFinish = true;
+				}
+			}
+			hasFinish = false;
+			i = 0;
+			while (!hasFinish) {
+				try {
+					inventoryThingsToSell.addItem(saveInventoryConfig.getItemStack(UUID.fromString(line.get(7))+"."+i));
+					i++;
+				} catch (Exception e) {
+					hasFinish = true;
+				}
+			}
 			Main.getInstance().getListVillagersShop().add(villagerShop);
 		}
 		System.out.println("[ShopPlayerPNJ-FDA] All VillagerShop load successfully !");

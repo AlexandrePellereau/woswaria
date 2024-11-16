@@ -15,7 +15,6 @@ import fr.dralexgon.shopasvillagerforplayers.commands.Commands;
 import fr.dralexgon.shopasvillagerforplayers.commands.TabCompletionSkinVillagerShop;
 import fr.dralexgon.shopasvillagerforplayers.gui.Gui;
 import fr.dralexgon.shopasvillagerforplayers.gui.ListenersGUI;
-import fr.dralexgon.shopasvillagerforplayers.saveandload.SaveAndLoad;
 import fr.dralexgon.shopasvillagerforplayers.saveandload.UseCsvFiles;
 
 public class Main extends JavaPlugin {
@@ -26,7 +25,6 @@ public class Main extends JavaPlugin {
 	private List<VillagerShop> listVillagersShop;
 	private List<VillagerShop> listVillagersShopInactive;
 	private Gui gui;
-	private UseCsvFiles useCsvFiles;
 	private List<List<Object>> tempVariables;
 	private long expirationTime;
 
@@ -42,12 +40,12 @@ public class Main extends JavaPlugin {
 		this.listVillagersShop = new ArrayList<>();
 		this.listVillagersShopInactive = new ArrayList<>();
 		this.tempVariables = new ArrayList<>();
-		this.useCsvFiles = new UseCsvFiles();
 		this.gui = new Gui(this);
 		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new Listeners(this), this);
 		pm.registerEvents(new ListenersGUI(this), this);
+		getCommand("test").setExecutor(new Commands());
 		getCommand("giveskinvillagershop").setExecutor(new CommandGiveSkinVillagerShop());
 		getCommand("giveskinvillagershop").setTabCompleter(new TabCompletionSkinVillagerShop());
 		getCommand("givevillagershop").setExecutor(new Commands());
@@ -88,10 +86,6 @@ public class Main extends JavaPlugin {
 		return this.gui;
 	}
 	
-	public UseCsvFiles getUseCsvFiles() {
-		return this.useCsvFiles;
-	}
-	
 	public List<List<Object>> getTempVariables() {
 		return this.tempVariables;
 	}
@@ -103,7 +97,7 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		//SaveAndLoad.save();
-		SaveAndLoad.saveInventoriesVillagerShop();
+		//SaveAndLoad.saveInventoriesVillagerShop();
 		SaveAndLoadSQLite.disable();
 
 		log(Main.getText("log.disabled"));

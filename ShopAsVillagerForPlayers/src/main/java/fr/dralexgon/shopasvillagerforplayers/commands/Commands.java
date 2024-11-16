@@ -1,5 +1,8 @@
 package fr.dralexgon.shopasvillagerforplayers.commands;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 import fr.dralexgon.shopasvillagerforplayers.Main;
@@ -11,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 
 
 public class Commands implements CommandExecutor{
@@ -19,6 +24,33 @@ public class Commands implements CommandExecutor{
 		if (!(sender instanceof Player)) { return false; }
 		Player player  = (Player)sender;
 		switch (cmd.getName()) {
+		case "test":
+			player.sendMessage("Test");
+			ItemStack iitem = player.getInventory().getItemInMainHand();
+			ByteArrayOutputStream io = new ByteArrayOutputStream();
+            BukkitObjectOutputStream os = null;
+            try {
+                os = new BukkitObjectOutputStream(io);
+				os.writeObject(iitem);
+				os.flush();
+
+				byte[] buf = io.toByteArray();
+				player.sendMessage("Test");
+				player.sendMessage(buf.toString());
+
+				ByteArrayInputStream in = new ByteArrayInputStream(buf);
+				BukkitObjectInputStream is = new BukkitObjectInputStream(in);
+
+				ItemStack newItem = (ItemStack) is.readObject();
+				player.getInventory().addItem(newItem);
+
+
+			} catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            player.sendMessage("Test2");
+			break;
 		case "givevillagershop":
 			ItemStack item = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
 			ItemMeta itemMeta = item.getItemMeta();
