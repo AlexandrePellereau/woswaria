@@ -1,4 +1,4 @@
 # Woswaria
 
-This is all the plugins I created.
-It's mainly for a Minecraft server.
+This repo contains every Minecraft plugins I created.
+It's mainly for my abandoned Minecraft server called Woswaria.
