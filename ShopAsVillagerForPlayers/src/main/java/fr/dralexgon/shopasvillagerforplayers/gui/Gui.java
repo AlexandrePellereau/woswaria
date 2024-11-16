@@ -143,7 +143,7 @@ public class Gui {
 					tempList.add(indexOfCurrentRecipe);
 					main.getTempVariables().add(tempList);
 				}else {
-					player.sendMessage(ChatColor.RED + Main.getText("message.notrade2"));
+					player.sendMessage(ChatColor.RED + Main.getText("error.notrade2"));
 				}
 				return;
 			}

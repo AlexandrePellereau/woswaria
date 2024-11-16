@@ -3,6 +3,7 @@ package fr.dralexgon.shopasvillagerforplayers;
 import java.io.File;
 import java.util.UUID;
 
+import fr.dralexgon.shopasvillagerforplayers.database.SaveAndLoadSQLite;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,10 +33,12 @@ public class VillagerShop {
 		setDefaultValues(owner, name, villager, hasInfiniteTrade);
 	}
 
+	/*
 	public VillagerShop(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
-		/*Only used for the save*/
+		//Only used for the save
 		setDefaultValues(owner, name, villager, hasInfiniteTrade);
 	}
+	*/
 
 	public void setDefaultValues(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
 		this.owner = owner;
@@ -139,14 +142,6 @@ public class VillagerShop {
 		this.getVillager().setCustomName(name);
 		this.getVillager().setCustomNameVisible(true);
 	}
-
-	public Inventory getInventoryObtained() {
-		return this.inventoryThingsObtained;
-	}
-
-	public Inventory getInventoryToSell() {
-		return this.inventoryThingsToSell;
-	}
 	
 	public void updateMaxUses() {
 		this.updateInventories();
@@ -183,6 +178,8 @@ public class VillagerShop {
 						// TODO: handle exception
 					}
 				}
+				SaveAndLoadSQLite.saveInventory(this.getVillager().getUniqueId()+"1", this.getInventoryThingsObtained());
+				SaveAndLoadSQLite.saveInventory(this.getVillager().getUniqueId()+"2", this.getInventoryThingsToSell());
 			} catch (Exception e) {
 				// TODO: handle exception
 			}

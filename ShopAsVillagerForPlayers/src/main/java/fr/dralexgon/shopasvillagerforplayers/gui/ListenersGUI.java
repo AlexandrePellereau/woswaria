@@ -3,6 +3,7 @@ package fr.dralexgon.shopasvillagerforplayers.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.dralexgon.shopasvillagerforplayers.database.SaveAndLoadSQLite;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -95,12 +96,16 @@ public class ListenersGUI implements Listener {
 		}
 		if (inventoryTitle.equals(ChatColor.BLUE + Main.getText("gui.newtrade.title"))) {
 			if (!item.hasItemMeta()) return;
-			switch (item.getType()) {
-			case MAGENTA_GLAZED_TERRACOTTA:
-			case PAPER:
+			String itemDisplayName = item.getItemMeta().getDisplayName();
+			if (itemDisplayName.equals(ChatColor.BLACK.toString()) ||
+					itemDisplayName.equals(Main.getText("gui.newtrade.items.toreceive1")) ||
+					itemDisplayName.equals(Main.getText("gui.newtrade.items.toreceive2")) ||
+					itemDisplayName.equals(Main.getText("gui.newtrade.items.tosell1")) ||
+					itemDisplayName.equals(Main.getText("gui.arrow"))) {
 				event.setCancelled(true);
-				break;
-			case GREEN_CONCRETE:
+				return;
+			}
+			if (item.getItemMeta().getDisplayName().equals(ChatColor.GREEN + Main.getText("gui.newtrade.items.submit"))) {
 				event.setCancelled(true);
 				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
@@ -115,9 +120,6 @@ public class ListenersGUI implements Listener {
 						player.closeInventory();
 					}
 				}
-				break;
-			default:
-				break;
 			}
 		}
 		if (inventoryTitle.equals(ChatColor.BLUE + Main.getText("gui.confirmdelete.title"))) {
@@ -254,8 +256,9 @@ public class ListenersGUI implements Listener {
 						for (List<Object> tempVariable2 : main.getTempVariables()) {
 							if (tempVariable2.get(0) == player && tempVariable2.get(1).equals("VillagerShopSelected")) {
 								VillagerShop villagerShop = (VillagerShop)tempVariable2.get(2);
-								player.sendMessage(ChatColor.YELLOW + Main.getText("message.renamesuccess") + event.getMessage());
 								villagerShop.setName(event.getMessage());
+								player.sendMessage(ChatColor.YELLOW + Main.getText("message.renamesuccess") + event.getMessage());
+								SaveAndLoadSQLite.updateVillagerShop(villagerShop);
 								event.setCancelled(true);
 								main.getTempVariables().remove(tempVariable);
 								main.getTempVariables().remove(tempVariable2);

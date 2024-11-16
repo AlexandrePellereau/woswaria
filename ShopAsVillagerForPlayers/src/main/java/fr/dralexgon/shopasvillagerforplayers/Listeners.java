@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.dralexgon.shopasvillagerforplayers.database.SaveAndLoadSQLite;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -38,7 +39,7 @@ import org.bukkit.util.Vector;
 
 public class Listeners implements Listener {
 	
-	private Main main;
+	private final Main main;
 
 	public Listeners(Main main) {
 		this.main = main;
@@ -59,11 +60,10 @@ public class Listeners implements Listener {
 			Location location = new Location(block.getWorld(), block.getLocation().getBlockX()+0.5, block.getLocation().getBlockY()+1, block.getLocation().getBlockZ()+0.5);
 			Vector playerDirection = player.getLocation().getDirection();
 			location.setDirection(new Vector(-playerDirection.getX(), 0, -playerDirection.getZ()));
-			Villager pnj = (Villager)block.getWorld().spawnEntity(location, EntityType.VILLAGER);
-			pnj.setAI(false);
-			pnj.setGravity(true);
-			pnj.setSilent(true);
-			main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, false));
+			Villager villager = (Villager)block.getWorld().spawnEntity(location, EntityType.VILLAGER);
+			VillagerShop villagerShop = new VillagerShop(player.getUniqueId(), villager, false);
+			main.getListVillagersShop().add(villagerShop);
+			SaveAndLoadSQLite.addVillagerShop(villagerShop);
 			if (player.getGameMode()!=GameMode.CREATIVE) {
 				it.setAmount(it.getAmount()-1);
 			}
@@ -72,11 +72,10 @@ public class Listeners implements Listener {
 			Location location = new Location(block.getWorld(), block.getLocation().getBlockX()+0.5, block.getLocation().getBlockY()+1, block.getLocation().getBlockZ()+0.5);
 			Vector playerDirection = player.getLocation().getDirection();
 			location.setDirection(new Vector(-playerDirection.getX(), 0, -playerDirection.getZ()));
-			Villager pnj = (Villager)block.getWorld().spawnEntity(location, EntityType.VILLAGER);
-			pnj.setAI(false);
-			pnj.setGravity(true);
-			pnj.setSilent(true);
-			main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, true));
+			Villager villager = (Villager)block.getWorld().spawnEntity(location, EntityType.VILLAGER);
+			VillagerShop villagerShop = new VillagerShop(player.getUniqueId(), villager, true);
+			main.getListVillagersShop().add(villagerShop);
+			SaveAndLoadSQLite.addVillagerShop(villagerShop);
 			if (player.getGameMode()!=GameMode.CREATIVE) {
 				it.setAmount(it.getAmount()-1);
 			}

@@ -24,8 +24,6 @@ public class SaveAndLoadSQLite {
                 + "world TEXT,"
                 + "x INT,"
                 + "z INT,"
-                + "inventory_obtained TEXT,"
-                + "inventory_to_sell TEXT,"
                 + "infinite_trade BOOLEAN"
                 + ")");
         Statement statement2 = connection.createStatement();
@@ -51,7 +49,7 @@ public class SaveAndLoadSQLite {
 
     public static void disable() {
         try {
-            save();
+            //save();
             instance.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,25 +57,30 @@ public class SaveAndLoadSQLite {
         }
     }
 
-    public static void addVillagerShop(String uuid,
-                                String owner, String name,
-                                String world, int x, int z,
-                                String inventoryObtained, String inventoryToSell,
-                                boolean infiniteTrade
-                                ) throws SQLException {
-        PreparedStatement preparedStatement = instance.connection.prepareStatement(
-                    "INSERT INTO villager_shop (uuid, owner, name, world, x, z, inventory_obtained, inventory_to_sell, infinite_trade) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        preparedStatement.setString(1, uuid);
-        preparedStatement.setString(2, owner);
-        preparedStatement.setString(3, name);
-        preparedStatement.setString(4, world);
-        preparedStatement.setInt(5, x);
-        preparedStatement.setInt(6, z);
-        preparedStatement.setString(7, inventoryObtained);
-        preparedStatement.setString(8, inventoryToSell);
-        preparedStatement.setBoolean(9, infiniteTrade);
-        preparedStatement.executeUpdate();
+    public static void addVillagerShop(VillagerShop villagerShop) {
+        String uuid = villagerShop.getVillager().getUniqueId().toString();
+        String owner = villagerShop.getOwner().toString();
+        String name = villagerShop.getName();
+        String world = villagerShop.getVillager().getWorld().getUID().toString();
+        int x = villagerShop.getVillager().getLocation().getChunk().getX();
+        int z = villagerShop.getVillager().getLocation().getChunk().getZ();
+        boolean infiniteTrade = villagerShop.hasInfiniteTrade();
+
+        try {
+            PreparedStatement preparedStatement = instance.connection.prepareStatement(
+                    "INSERT INTO villager_shop (uuid, owner, name, world, x, z, infinite_trade) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            preparedStatement.setString(1, uuid);
+            preparedStatement.setString(2, owner);
+            preparedStatement.setString(3, name);
+            preparedStatement.setString(4, world);
+            preparedStatement.setInt(5, x);
+            preparedStatement.setInt(6, z);
+            preparedStatement.setBoolean(7, infiniteTrade);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.log("Error when trying to add to the database.");
+        }
     }
 
     public static boolean existsVillagerShop(String uuid) throws SQLException {
@@ -87,50 +90,30 @@ public class SaveAndLoadSQLite {
         return resultSet.next();
     }
 
-    public static void updateVillagerShop(String uuid,
-                                   String owner, String name,
-                                   String world, int x, int z,
-                                   String inventoryObtained, String inventoryToSell,
-                                   boolean infiniteTrade
-                                   ) throws SQLException {
-        PreparedStatement preparedStatement = instance.connection.prepareStatement(
-                    "UPDATE villager_shop SET owner = ?, name = ?, world = ?, x = ?, z = ?, inventory_obtained = ?, inventory_to_sell = ?, infinite_trade = ? WHERE uuid = ?");
-        preparedStatement.setString(1, owner);
-        preparedStatement.setString(2, name);
-        preparedStatement.setString(3, world);
-        preparedStatement.setInt(4, x);
-        preparedStatement.setInt(5, z);
-        preparedStatement.setString(6, inventoryObtained);
-        preparedStatement.setString(7, inventoryToSell);
-        preparedStatement.setBoolean(8, infiniteTrade);
-        preparedStatement.setString(9, uuid);
-        preparedStatement.executeUpdate();
-    }
+    public static void updateVillagerShop(VillagerShop villagerShop) {
+        String uuid = villagerShop.getVillager().getUniqueId().toString();
+        String owner = villagerShop.getOwner().toString();
+        String name = villagerShop.getName();
+        String world = villagerShop.getVillager().getWorld().getUID().toString();
+        int x = villagerShop.getVillager().getLocation().getChunk().getX();
+        int z = villagerShop.getVillager().getLocation().getChunk().getZ();
+        boolean infiniteTrade = villagerShop.hasInfiniteTrade();
 
-    public static void removeVillagerShop(String uuid) throws SQLException {
-        PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop WHERE uuid = ?");
-        preparedStatement.setString(1, uuid);
-        preparedStatement.executeUpdate();
-    }
-
-    public static VillagerShop getVillagerShop(String uuid) throws SQLException {
-        PreparedStatement preparedStatement = instance.connection.prepareStatement("SELECT * FROM villager_shop WHERE uuid = ?");
-        preparedStatement.setString(1, uuid);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        if (!resultSet.next()) {
-            return null;
+        try {
+            PreparedStatement preparedStatement = instance.connection.prepareStatement(
+                    "UPDATE villager_shop SET owner = ?, name = ?, world = ?, x = ?, z = ?, infinite_trade = ? WHERE uuid = ?");
+            preparedStatement.setString(1, owner);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, world);
+            preparedStatement.setInt(4, x);
+            preparedStatement.setInt(5, z);
+            preparedStatement.setBoolean(6, infiniteTrade);
+            preparedStatement.setString(7, uuid);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.log("Error when trying to update the database.");
         }
-
-        VillagerShop villagerShop = new VillagerShop(
-                resultSet.getString("uuid"),
-                resultSet.getString("owner"),
-                resultSet.getString("name"),
-                resultSet.getString("world"),
-                resultSet.getInt("x"),
-                resultSet.getInt("z"),
-                resultSet.getBoolean("infinite_trade")
-        );
-        return villagerShop;
     }
 
     public static void load() throws SQLException {
@@ -158,31 +141,13 @@ public class SaveAndLoadSQLite {
             preparedStatement.executeUpdate();
             for (VillagerShop villagerShop : Main.getInstance().getListVillagersShop()) {
                 if (existsVillagerShop(villagerShop.getVillager().getUniqueId().toString())) {
-                    updateVillagerShop(
-                            villagerShop.getVillager().getUniqueId().toString(),
-                            villagerShop.getOwner().toString(),
-                            villagerShop.getName(),
-                            villagerShop.getVillager().getWorld().getUID().toString(),
-                            villagerShop.getVillager().getLocation().getBlockX(),
-                            villagerShop.getVillager().getLocation().getBlockZ(),
-                            villagerShop.getVillager().getUniqueId()+"1",
-                            villagerShop.getVillager().getUniqueId()+"2",
-                            villagerShop.hasInfiniteTrade()
-                    );
+                    updateVillagerShop(villagerShop);
                 } else {
-                    addVillagerShop(
-                            villagerShop.getVillager().getUniqueId().toString(),
-                            villagerShop.getOwner().toString(),
-                            villagerShop.getName(),
-                            villagerShop.getVillager().getWorld().getUID().toString(),
-                            villagerShop.getVillager().getLocation().getBlockX(),
-                            villagerShop.getVillager().getLocation().getBlockZ(),
-                            villagerShop.getVillager().getUniqueId()+"1",
-                            villagerShop.getVillager().getUniqueId()+"2",
-                            villagerShop.hasInfiniteTrade()
-                    );
+                    addVillagerShop(villagerShop);
                 }
-                saveInventory(villagerShop.getVillager().getUniqueId()+"1", villagerShop.getInventoryObtained());
+                //villagerShop.updateInventories(); no need
+                saveInventory(villagerShop.getVillager().getUniqueId()+"1", villagerShop.getInventoryThingsObtained());
+                saveInventory(villagerShop.getVillager().getUniqueId()+"2", villagerShop.getInventoryThingsToSell());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -219,4 +184,32 @@ public class SaveAndLoadSQLite {
     public void closeConnection() throws SQLException {
         this.connection.close();
     }
+
+        /*
+    public static void removeVillagerShop(String uuid) throws SQLException {
+        PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop WHERE uuid = ?");
+        preparedStatement.setString(1, uuid);
+        preparedStatement.executeUpdate();
+    }
+
+    public static VillagerShop getVillagerShop(String uuid) throws SQLException {
+        PreparedStatement preparedStatement = instance.connection.prepareStatement("SELECT * FROM villager_shop WHERE uuid = ?");
+        preparedStatement.setString(1, uuid);
+        ResultSet resultSet = preparedStatement.executeQuery();
+        if (!resultSet.next()) {
+            return null;
+        }
+
+        VillagerShop villagerShop = new VillagerShop(
+                resultSet.getString("uuid"),
+                resultSet.getString("owner"),
+                resultSet.getString("name"),
+                resultSet.getString("world"),
+                resultSet.getInt("x"),
+                resultSet.getInt("z"),
+                resultSet.getBoolean("infinite_trade")
+        );
+        return villagerShop;
+    }
+     */
 }
