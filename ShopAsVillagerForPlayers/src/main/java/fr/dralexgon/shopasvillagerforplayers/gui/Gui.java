@@ -109,12 +109,12 @@ public class Gui {
 		Inventory inventory = Bukkit.createInventory(null, size*9, ChatColor.BLUE + Main.getText("gui.deletetrade.title"));
 		fillInventory(inventory);
 		
-		for (List tempVariable : main.getTempVariables()) {
+		for (List<Object> tempVariable : main.getTempVariables()) {
 			if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 				VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
 				if (villagerShop.getVillager().getRecipeCount()>0) {
 					int indexOfCurrentRecipe = 0;
-					for (List tempVariable2 : main.getTempVariables()) {
+					for (List<Object> tempVariable2 : main.getTempVariables()) {
 						if (tempVariable2.get(0)==player && tempVariable2.get(1).equals("TradeSelected")) {
 							indexOfCurrentRecipe = (int)tempVariable2.get(2);
 							main.getTempVariables().remove(tempVariable2);
