@@ -128,7 +128,7 @@ public class ListenersGUI implements Listener {
 				for (List<Object> tempVariable : main.getTempVariables()) {
 					if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
 						VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
-						if (player.getGameMode()!=GameMode.CREATIVE) {
+						if (!villagerShop.hasInfiniteTrade()) {
 							for (ItemStack itemstack : villagerShop.getInventoryThingsObtained()) {
 								try {
 									villagerShop.getVillager().getWorld().dropItem(villagerShop.getVillager().getLocation(), itemstack);
