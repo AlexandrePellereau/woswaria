@@ -12,7 +12,7 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class CommandGiveSkinVillagerShop implements CommandExecutor{
+public class CommandGiveSkinVillagerShop implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] arguments) {
 		if (sender instanceof Player) {

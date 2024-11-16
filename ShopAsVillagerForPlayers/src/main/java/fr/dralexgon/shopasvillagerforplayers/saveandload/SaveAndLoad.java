@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import fr.dralexgon.shopasvillagerforplayers.Main;
 import fr.dralexgon.shopasvillagerforplayers.VillagerShop;
 
+@Deprecated
 public class SaveAndLoad {
 	
 	public static void save() {

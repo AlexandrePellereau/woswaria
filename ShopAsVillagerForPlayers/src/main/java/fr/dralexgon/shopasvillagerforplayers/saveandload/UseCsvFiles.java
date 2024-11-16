@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class UseCsvFiles {
 	
 	public static void save(String nameFile,List<List<String>> listOfLines, String pathFile) {

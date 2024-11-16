@@ -51,6 +51,7 @@ public class SaveAndLoadSQLite {
 
     public static void disable() {
         try {
+            save();
             instance.closeConnection();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -216,7 +217,6 @@ public class SaveAndLoadSQLite {
     }
 
     public void closeConnection() throws SQLException {
-        save();
         this.connection.close();
     }
 }
