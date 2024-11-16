@@ -155,18 +155,22 @@ public class SaveAndLoadSQLite {
         }
     }
 
-    public static void saveInventory(String uuid, Inventory inventory) throws SQLException {
-        PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop_inventories WHERE uuid = ?");
-        preparedStatement.setString(1, uuid);
-        preparedStatement.executeUpdate();
-        for (ItemStack item : inventory.getContents()) {
-            if (item == null) {
-                continue;
-            }
-            preparedStatement = instance.connection.prepareStatement("INSERT INTO villager_shop_inventories (uuid, item) VALUES (?, ?)");
+    public static void saveInventory(String uuid, Inventory inventory) {
+        try {
+            PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop_inventories WHERE uuid = ?");
             preparedStatement.setString(1, uuid);
-            preparedStatement.setBytes(2, ItemStackSerializer.serializeBytes(item));
             preparedStatement.executeUpdate();
+            for (ItemStack item : inventory.getContents()) {
+                if (item == null)
+                    continue;
+                preparedStatement = instance.connection.prepareStatement("INSERT INTO villager_shop_inventories (uuid, item) VALUES (?, ?)");
+                preparedStatement.setString(1, uuid);
+                preparedStatement.setBytes(2, ItemStackSerializer.serializeBytes(item));
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.log("Error when trying to save the inventory.");
         }
     }
 

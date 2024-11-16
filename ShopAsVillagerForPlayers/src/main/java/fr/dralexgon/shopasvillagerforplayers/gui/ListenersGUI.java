@@ -13,6 +13,7 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -21,10 +22,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.dralexgon.shopasvillagerforplayers.Main;
 import fr.dralexgon.shopasvillagerforplayers.VillagerShop;
+import org.checkerframework.checker.units.qual.C;
 
 
 public class ListenersGUI implements Listener {
-	private Main main;
+
+	private final Main main;
 
 	public ListenersGUI(Main main) {
 		this.main = main;
@@ -272,6 +275,22 @@ public class ListenersGUI implements Listener {
 					event.setCancelled(true);
 					main.getTempVariables().remove(tempVariable);
 					return;
+				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event) {
+		String inventoryTitle = event.getView().getTitle();
+		Player player = (Player)event.getPlayer();
+		for (List<Object> tempVariable : main.getTempVariables()) {
+			if (tempVariable.get(0)==player && tempVariable.get(1).equals("VillagerShopSelected")) {
+				VillagerShop villagerShop = (VillagerShop)tempVariable.get(2);
+				if (event.getInventory() == villagerShop.getInventoryThingsToSell() || event.getInventory() == villagerShop.getInventoryThingsObtained()) {
+					villagerShop.updateInventories();
+					SaveAndLoadSQLite.saveInventory(villagerShop.getVillager().getUniqueId()+"1", villagerShop.getInventoryThingsObtained());
+					SaveAndLoadSQLite.saveInventory(villagerShop.getVillager().getUniqueId()+"2", villagerShop.getInventoryThingsToSell());
 				}
 			}
 		}
