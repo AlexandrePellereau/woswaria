@@ -49,76 +49,73 @@ public class Listeners implements Listener {
 		Action action = event.getAction();
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
-		if (action==Action.RIGHT_CLICK_BLOCK) {
-			ItemStack it = event.getItem();
-			if (it == null) return;
-			if (it.getType() != Material.VILLAGER_SPAWN_EGG) return;
-			if (!it.hasItemMeta()) return;
-			if (it.getItemMeta().getDisplayName().equals(ChatColor.YELLOW+"VillagerShop")) {
-				event.setCancelled(true);
-				Location loactionPnj = new Location(block.getWorld(), block.getLocation().getBlockX()+0.5, block.getLocation().getBlockY()+1, block.getLocation().getBlockZ()+0.5);
-				Vector playerDirection = player.getLocation().getDirection();
-				loactionPnj.setDirection(new Vector(-playerDirection.getX(), 0, -playerDirection.getZ()));
-				Villager pnj = (Villager)block.getWorld().spawnEntity(loactionPnj, EntityType.VILLAGER);
-				pnj.setAI(false);
-				pnj.setGravity(true);
-				pnj.setSilent(true);
-				main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, false));
-				if (player.getGameMode()!=GameMode.CREATIVE) {
-					it.setAmount(it.getAmount()-1);
-				}
-			} else if (it.getItemMeta().getDisplayName().equals(ChatColor.YELLOW+"VillagerShopInfiniteTrade")) {
-				event.setCancelled(true);
-				Location loactionPnj = new Location(block.getWorld(), block.getLocation().getBlockX()+0.5, block.getLocation().getBlockY()+1, block.getLocation().getBlockZ()+0.5);
-				Vector playerDirection = player.getLocation().getDirection();
-				loactionPnj.setDirection(new Vector(-playerDirection.getX(), 0, -playerDirection.getZ()));
-				Villager pnj = (Villager)block.getWorld().spawnEntity(loactionPnj, EntityType.VILLAGER);
-				pnj.setAI(false);
-				pnj.setGravity(true);
-				pnj.setSilent(true);
-				main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, true));
-				if (player.getGameMode()!=GameMode.CREATIVE) {
-					it.setAmount(it.getAmount()-1);
-				}
+
+		if (action != Action.RIGHT_CLICK_BLOCK) return;
+		ItemStack it = event.getItem();
+		if (it == null || it.getType() != Material.VILLAGER_SPAWN_EGG || !it.hasItemMeta()) return;
+
+		if (it.getItemMeta().getDisplayName().equals(ChatColor.YELLOW+"VillagerShop")) {
+			event.setCancelled(true);
+			Location location = new Location(block.getWorld(), block.getLocation().getBlockX()+0.5, block.getLocation().getBlockY()+1, block.getLocation().getBlockZ()+0.5);
+			Vector playerDirection = player.getLocation().getDirection();
+			location.setDirection(new Vector(-playerDirection.getX(), 0, -playerDirection.getZ()));
+			Villager pnj = (Villager)block.getWorld().spawnEntity(location, EntityType.VILLAGER);
+			pnj.setAI(false);
+			pnj.setGravity(true);
+			pnj.setSilent(true);
+			main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, false));
+			if (player.getGameMode()!=GameMode.CREATIVE) {
+				it.setAmount(it.getAmount()-1);
 			}
-			/*
-			if (it.getItemMeta().getLore().get(0).equals("?0VillagerShopCustom")) {
-				event.setCancelled(true);
-				long villagerShopUUID = Long.valueOf(it.getItemMeta().getLore().get(1).split(":")[3]);
-				long villagerShopTimeOfCreation = Long.valueOf(it.getItemMeta().getLore().get(1).split(":")[4]);
-				if (System.currentTimeMillis()>=villagerShopTimeOfCreation+main.getExpirationTime()) {
-					player.sendMessage("Ce marchant est rest? trop longtemps sous forme d'oeuf !");
-					player.getInventory().remove(it);
-					player.updateInventory();
-				}else {
-					for (VillagerShop villagerShopInactive : main.getListVillagersShopInactive()) {
-						if (villagerShopInactive.getID()==villagerShopUUID) {
-							main.getListVillagersShop().add(villagerShopInactive);
-							main.getListVillagersShopInactive().remove(villagerShopInactive);
-							return;
-						}
+		} else if (it.getItemMeta().getDisplayName().equals(ChatColor.YELLOW+"VillagerShopInfiniteTrade")) {
+			event.setCancelled(true);
+			Location location = new Location(block.getWorld(), block.getLocation().getBlockX()+0.5, block.getLocation().getBlockY()+1, block.getLocation().getBlockZ()+0.5);
+			Vector playerDirection = player.getLocation().getDirection();
+			location.setDirection(new Vector(-playerDirection.getX(), 0, -playerDirection.getZ()));
+			Villager pnj = (Villager)block.getWorld().spawnEntity(location, EntityType.VILLAGER);
+			pnj.setAI(false);
+			pnj.setGravity(true);
+			pnj.setSilent(true);
+			main.getListVillagersShop().add(new VillagerShop(player.getUniqueId(), pnj, true));
+			if (player.getGameMode()!=GameMode.CREATIVE) {
+				it.setAmount(it.getAmount()-1);
+			}
+		}
+		/*
+		if (it.getItemMeta().getLore().get(0).equals("?0VillagerShopCustom")) {
+			event.setCancelled(true);
+			long villagerShopUUID = Long.valueOf(it.getItemMeta().getLore().get(1).split(":")[3]);
+			long villagerShopTimeOfCreation = Long.valueOf(it.getItemMeta().getLore().get(1).split(":")[4]);
+			if (System.currentTimeMillis()>=villagerShopTimeOfCreation+main.getExpirationTime()) {
+				player.sendMessage("Ce marchant est rest? trop longtemps sous forme d'oeuf !");
+				player.getInventory().remove(it);
+				player.updateInventory();
+			}else {
+				for (VillagerShop villagerShopInactive : main.getListVillagersShopInactive()) {
+					if (villagerShopInactive.getID()==villagerShopUUID) {
+						main.getListVillagersShop().add(villagerShopInactive);
+						main.getListVillagersShopInactive().remove(villagerShopInactive);
+						return;
 					}
 				}
 			}
-			*/
 		}
+		*/
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onLeftClickVillagerShop(EntityDamageByEntityEvent event) {
-		if (event.getDamager() instanceof Player && event.getEntity() instanceof Villager) {
-			Player player = (Player)event.getDamager();
-			List<List> listTempVarToRemove = new ArrayList<>();
-			for (List tempVariable : main.getTempVariables()) {
+		if (event.getDamager() instanceof Player player && event.getEntity() instanceof Villager villager) {
+            List<List<Object>> listTempVarToRemove = new ArrayList<>();
+			for (List<Object> tempVariable : main.getTempVariables()) {
 				if (tempVariable.get(0)==player && (tempVariable.get(1).equals("VillagerShopSelected") || tempVariable.get(1).equals("RenameVillagerShop") || tempVariable.get(1).equals("TradeSelected"))) {
 					listTempVarToRemove.add(tempVariable);
 				}
 			}
-			for (List tempVarToRemove : listTempVarToRemove) {
+			for (List<Object> tempVarToRemove : listTempVarToRemove) {
 				main.getTempVariables().remove(tempVarToRemove);
 			}
-			Villager villager = (Villager)event.getEntity();
-			for (VillagerShop villagerShop : main.getListVillagersShop()) {
+            for (VillagerShop villagerShop : main.getListVillagersShop()) {
 				if (villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
 					event.setCancelled(true);
 					if (villagerShop.getOwner().equals(player.getUniqueId())) {
@@ -180,7 +177,7 @@ public class Listeners implements Listener {
 	public void onVillagerShopKiller(PlayerInteractAtEntityEvent event) {
 		if (event.getRightClicked() instanceof Villager) {
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-			if (item != null && item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(ChatColor.RED + "VillagerShopKiller")) {
+			if (item.hasItemMeta() && item.getItemMeta().getDisplayName().equals(ChatColor.RED + "VillagerShopKiller")) {
 				Player player = event.getPlayer();
 				Villager villager = (Villager)event.getRightClicked();
 				for (VillagerShop villagerShop : main.getListVillagersShop()) {
@@ -195,34 +192,27 @@ public class Listeners implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onRightClickVillagerShop(PlayerInteractAtEntityEvent event) {
-		if (event.getRightClicked() instanceof Villager) {
+		if (event.getRightClicked() instanceof Villager villager) {
 			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
 			Player player = event.getPlayer();
-			Villager villager = (Villager)event.getRightClicked();
-			if (item!=null) {
-				if (item.getType()==Material.LEATHER_CHESTPLATE) {
-					if (item.hasItemMeta()) {
-						if (item.getItemMeta().hasLore()) {
-							for (VillagerShop villagerShop : main.getListVillagersShop()) {
-								if (villagerShop.getOwner().equals(player.getUniqueId()) && villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
-									event.setCancelled(true);
-									player.closeInventory();
-									Profession profession = Profession.valueOf(item.getItemMeta().getLore().get(0));
-									if (profession != villager.getProfession()) {
-										List<MerchantRecipe> recipes = villager.getRecipes();
-										villager.setProfession(profession);
-										villager.setRecipes(recipes);
-										if (player.getGameMode() != GameMode.CREATIVE) {
-											ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-											itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
-										}
-									} else {
-										player.sendMessage(ChatColor.RED + Main.getText("error.alreadyhavesameskin"));
-									}
-									return;
-								}
+			if (item.getType()==Material.LEATHER_CHESTPLATE && item.hasItemMeta() && item.getItemMeta().hasLore()) {
+				for (VillagerShop villagerShop : main.getListVillagersShop()) {
+					if (villagerShop.getOwner().equals(player.getUniqueId()) && villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
+						event.setCancelled(true);
+						player.closeInventory();
+						Profession profession = Profession.valueOf(item.getItemMeta().getLore().get(0));
+						if (profession != villager.getProfession()) {
+							List<MerchantRecipe> recipes = villager.getRecipes();
+							villager.setProfession(profession);
+							villager.setRecipes(recipes);
+							if (player.getGameMode() != GameMode.CREATIVE) {
+								ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+								itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
 							}
+						} else {
+							player.sendMessage(ChatColor.RED + Main.getText("error.alreadyhavesameskin"));
 						}
+						return;
 					}
 				}
 			}
@@ -230,7 +220,7 @@ public class Listeners implements Listener {
 				if (villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
 					villagerShop.updateMaxUses();
 					if (villagerShop.getOwner().equals(player.getUniqueId())) {
-						if (villager.getRecipes().size() == 0) {
+						if (villager.getRecipes().isEmpty()) {
 							player.sendMessage(ChatColor.YELLOW + Main.getText("error.notrade"));
 						}
 					}
