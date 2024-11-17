@@ -16,8 +16,9 @@ public class MultiLanguage {
             main.getDataFolder().mkdirs();
         }
 
-        main.saveResource("languages/fr_fr.yml", true);
-        main.saveResource("languages/en_us.yml", true);
+        main.saveResource("languages/fr_FR.yml", true);
+        main.saveResource("languages/en_US.yml", true);
+        //TODO: main.saveResource("languages/de_DE.yml", true);
 
         return loadLanguageFile("languages/" + main.getConfig().getString("language") + ".yml");
     }

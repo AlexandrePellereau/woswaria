@@ -1,5 +1,5 @@
-#Languages supported : en_us, fr_fr
-language: "fr_fr"
+#Languages supported : en_US, fr_FR (you can add your own language in the languages folder)
+language: "en_US"
 
 
 #Set to true if you want to give the permission to all player to use this command by default
