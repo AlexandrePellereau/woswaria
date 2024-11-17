@@ -44,7 +44,6 @@ public class Main extends JavaPlugin {
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new Listeners(this), this);
 		pm.registerEvents(new ListenersGUI(this), this);
-		getCommand("test").setExecutor(new Commands());
 		getCommand("giveskinvillagershop").setExecutor(new CommandGiveSkinVillagerShop());
 		getCommand("giveskinvillagershop").setTabCompleter(new TabCompletionSkinVillagerShop());
 		getCommand("givevillagershop").setExecutor(new Commands());

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import fr.dralexgon.shopasvillagerforplayers.Main;
+import fr.dralexgon.shopasvillagerforplayers.VillagerShop;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -24,6 +25,7 @@ public class Commands implements CommandExecutor{
 		if (!(sender instanceof Player)) { return false; }
 		Player player  = (Player)sender;
 		switch (cmd.getName()) {
+		/*
 		case "test":
 			player.sendMessage("Test");
 			ItemStack iitem = player.getInventory().getItemInMainHand();
@@ -48,23 +50,15 @@ public class Commands implements CommandExecutor{
 			} catch (Exception e) {
                 throw new RuntimeException(e);
             }
-
             player.sendMessage("Test2");
 			break;
+		 */
 		case "givevillagershop":
-			ItemStack item = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
-			ItemMeta itemMeta = item.getItemMeta();
-			itemMeta.setDisplayName("§eVillagerShop");
-			item.setItemMeta(itemMeta);
-			player.getInventory().addItem(item);
+			player.getInventory().addItem(VillagerShop.getEgg(false));
 			player.sendMessage(Main.getText("commands.givevillagershop.success"));
 			break;
 		case "givevillagershopinfinitetrade":
-			ItemStack item2 = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
-			ItemMeta itemMeta2 = item2.getItemMeta();
-			itemMeta2.setDisplayName("§eVillagerShopInfiniteTrade");
-			item2.setItemMeta(itemMeta2);
-			player.getInventory().addItem(item2);
+			player.getInventory().addItem(VillagerShop.getEgg(true));
 			player.sendMessage(Main.getText("commands.givevillagershopinfinitetrade.success"));
 			break;
 		case "givevillagershopkiller":

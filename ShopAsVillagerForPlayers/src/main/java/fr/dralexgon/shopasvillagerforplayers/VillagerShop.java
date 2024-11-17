@@ -12,6 +12,7 @@ import org.bukkit.entity.Villager;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,6 +94,17 @@ public class VillagerShop {
 
 		this.setInventoryObtained(SaveAndLoadSQLite.loadInventory(uuid + "1"));
 		this.setInventoryToSell(SaveAndLoadSQLite.loadInventory(uuid + "2"));
+	}
+
+	public static ItemStack getEgg(boolean hasInfiniteTrade) {
+		ItemStack item = new ItemStack(Material.VILLAGER_SPAWN_EGG,1);
+		ItemMeta itemMeta = item.getItemMeta();
+		if (hasInfiniteTrade)
+			itemMeta.setDisplayName("§eVillagerShopInfiniteTrade");
+		else
+			itemMeta.setDisplayName("§eVillagerShop");
+		item.setItemMeta(itemMeta);
+		return item;
 	}
 	
 	public boolean isDead() {
@@ -222,6 +234,4 @@ public class VillagerShop {
 	public void setInventoryToSell(Inventory itemStacks) {
 		this.inventoryThingsToSell = itemStacks;
 	}
-
-
 }

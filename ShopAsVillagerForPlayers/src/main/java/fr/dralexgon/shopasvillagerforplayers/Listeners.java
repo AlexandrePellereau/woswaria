@@ -12,19 +12,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.*;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTransformEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -152,26 +146,6 @@ public class Listeners implements Listener {
 		}
 	}
 	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onVillagerTransform(EntityTransformEvent event) {
-		if (event.getEntity() instanceof Villager) {
-			for (VillagerShop villagerShop : main.getListVillagersShop()) {
-				if (villagerShop.getVillager().getUniqueId().equals(event.getEntity().getUniqueId())) {
-					event.setCancelled(true);
-				}
-			}
-		}
-	} 
-	
-//	@EventHandler(priority = EventPriority.HIGHEST)
-//	public void onRightClickVillagerShopWithVillagerEgg(PlayerInteractAtEntityEvent event) {
-//		Bukkit.broadcastMessage("test1");
-//		if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.VILLAGER_SPAWN_EGG && event.getRightClicked().getType() == EntityType.VILLAGER) {
-//			Bukkit.broadcastMessage("test2");
-//			event.setCancelled(true);
-//		}
-//	}
-	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onVillagerShopKiller(PlayerInteractAtEntityEvent event) {
 		if (event.getRightClicked() instanceof Villager) {
@@ -191,37 +165,38 @@ public class Listeners implements Listener {
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onRightClickVillagerShop(PlayerInteractAtEntityEvent event) {
-		if (event.getRightClicked() instanceof Villager villager) {
-			ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
-			Player player = event.getPlayer();
-			if (item.getType()==Material.LEATHER_CHESTPLATE && item.hasItemMeta() && item.getItemMeta().hasLore()) {
-				for (VillagerShop villagerShop : main.getListVillagersShop()) {
-					if (villagerShop.getOwner().equals(player.getUniqueId()) && villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
-						event.setCancelled(true);
-						player.closeInventory();
-						Profession profession = Profession.valueOf(item.getItemMeta().getLore().get(0));
-						if (profession != villager.getProfession()) {
-							List<MerchantRecipe> recipes = villager.getRecipes();
-							villager.setProfession(profession);
-							villager.setRecipes(recipes);
-							if (player.getGameMode() != GameMode.CREATIVE) {
-								ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-								itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
-							}
-						} else {
-							player.sendMessage(ChatColor.RED + Main.getText("error.alreadyhavesameskin"));
+		if (!(event.getRightClicked() instanceof Villager villager)) return;
+
+        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+		Player player = event.getPlayer();
+
+		if (item.getType() == Material.LEATHER_CHESTPLATE && item.hasItemMeta() && item.getItemMeta().hasLore()) {
+			for (VillagerShop villagerShop : main.getListVillagersShop()) {
+				if (villagerShop.getOwner().equals(player.getUniqueId()) && villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
+					event.setCancelled(true);
+					player.closeInventory();
+					Profession profession = Profession.valueOf(item.getItemMeta().getLore().get(0));
+					if (profession != villager.getProfession()) {
+						List<MerchantRecipe> recipes = villager.getRecipes();
+						villager.setProfession(profession);
+						villager.setRecipes(recipes);
+						if (player.getGameMode() != GameMode.CREATIVE) {
+							ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+							itemInMainHand.setAmount(itemInMainHand.getAmount()-1);
 						}
-						return;
+					} else {
+						player.sendMessage(ChatColor.RED + Main.getText("error.alreadyhavesameskin"));
 					}
+					return;
 				}
 			}
-			for (VillagerShop villagerShop : main.getListVillagersShop()) {
-				if (villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
-					villagerShop.updateMaxUses();
-					if (villagerShop.getOwner().equals(player.getUniqueId())) {
-						if (villager.getRecipes().isEmpty()) {
-							player.sendMessage(ChatColor.YELLOW + Main.getText("error.notrade"));
-						}
+		}
+		for (VillagerShop villagerShop : main.getListVillagersShop()) {
+			if (villagerShop.getVillager().getUniqueId().equals(villager.getUniqueId())) {
+				villagerShop.updateMaxUses();
+				if (villagerShop.getOwner().equals(player.getUniqueId())) {
+					if (villager.getRecipes().isEmpty()) {
+						player.sendMessage(ChatColor.YELLOW + Main.getText("error.notrade"));
 					}
 				}
 			}
@@ -320,5 +295,24 @@ public class Listeners implements Listener {
 			attachment.setPermission("givevillagershopinfinitetrade.use", true);
 		}
 	}
-	
+
+	//Edge case: VillagerShop is transformed into a witch by lightning
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onVillagerTransform(EntityTransformEvent event) {
+		if (event.getEntity() instanceof Villager) {
+			for (VillagerShop villagerShop : main.getListVillagersShop()) {
+				if (villagerShop.getVillager().getUniqueId().equals(event.getEntity().getUniqueId())) {
+					event.setCancelled(true);
+				}
+			}
+		}
+	}
+
+	//Edge case: VillagerShop right-clicked with a spawn egg
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onRightClickVillagerShopWithVillagerEgg(PlayerInteractAtEntityEvent event) {
+		if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.VILLAGER_SPAWN_EGG && event.getRightClicked().getType() == EntityType.VILLAGER) {
+			event.setCancelled(true);
+		}
+	}
 }
