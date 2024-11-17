@@ -308,11 +308,42 @@ public class Listeners implements Listener {
 		}
 	}
 
-	//Edge case: VillagerShop right-clicked with a spawn egg
-	@EventHandler(priority = EventPriority.NORMAL)
+	//Edge case: VillagerShop right-clicked with a spawn egg. Cancel baby villager creation
+	/*
+	@EventHandler(priority = EventPriority.LOW)
 	public void onRightClickVillagerShopWithVillagerEgg(PlayerInteractAtEntityEvent event) {
-		if (event.getPlayer().getInventory().getItemInMainHand().getType() == Material.VILLAGER_SPAWN_EGG && event.getRightClicked().getType() == EntityType.VILLAGER) {
+		if (!(event.getRightClicked() instanceof Villager))
+			return;
+
+		ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+		if (item.getType() == Material.VILLAGER_SPAWN_EGG) {
 			event.setCancelled(true);
+			Bukkit.broadcastMessage("Event cancelled");
+		}
+	}
+	*/
+
+	//Edge case: VillagerShop right-clicked with a spawn egg. Cancel baby villager creation
+	@EventHandler(priority = EventPriority.LOW)
+	public void onSpawnVillagerShopWithVillagerEgg(CreatureSpawnEvent event) {
+		if (!(event.getEntity() instanceof Villager villager))
+			return;
+
+		if (!villager.isAdult() && event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) {
+			event.setCancelled(true);
+			//Get the closest player to the villager
+			Player closestPlayer = null;
+			double closestDistance = Double.MAX_VALUE;
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				double distance = player.getLocation().distance(villager.getLocation());
+				if (distance < closestDistance) {
+					closestDistance = distance;
+					closestPlayer = player;
+				}
+			}
+			if (closestPlayer != null) {
+				closestPlayer.sendMessage(Main.getText("error.spawnvillagershoponvillagershop"));
+			}
 		}
 	}
 }

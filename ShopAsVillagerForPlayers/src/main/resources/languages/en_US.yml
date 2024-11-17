@@ -63,6 +63,7 @@ error:
     part1: "The name of the VillagerShop must have between "
     part2: " and "
     part3: " characters."
+  spawnvillagershoponvillagershop: §cYou can't spawn a VillagerShop on a VillagerShop !
 
 message:
   renamevillagershop: Write the name in the chat (before 60s)
