@@ -4,7 +4,7 @@ log:
   enabled: Enabled !
   disabled: Disabled !
 villagershop:
-  defaultname: "§eMerchant of "#I put " to see the blank space. It's not mandatory
+  defaultname: "§eVillagerShop of "#I put " to see the blank space. It's not mandatory
 
 gui:
   arrow: --->
