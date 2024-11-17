@@ -152,10 +152,8 @@ public class VillagerShop {
 			} else {
 				int nbItem = 0;
 				for (ItemStack  itemStack : this.getInventoryThingsToSell().getContents()) {
-					if (itemStack!=null) {
-						if (itemStack.getType()==trade.getResult().getType()) {
-							nbItem+=itemStack.getAmount();
-						}
+					if (itemStack != null && itemStack.isSimilar(trade.getResult())) {
+						nbItem += itemStack.getAmount();
 					}
 				}
 				this.getListLastMaxUses().add(Math.floorDiv(nbItem, trade.getResult().getAmount()));
@@ -170,7 +168,7 @@ public class VillagerShop {
 			try {
 				int nbTrade = trade.getUses();
 				for (int i = 0; i < nbTrade; i++) {
-					removeInventory(this.getInventoryThingsToSell(), trade.getResult().getType(), trade.getResult().getAmount());
+					removeInventory(this.getInventoryThingsToSell(), trade.getResult(), trade.getResult().getAmount());
 					this.getInventoryThingsObtained().addItem(trade.getIngredients().get(0));
 					try {
 						this.getInventoryThingsObtained().addItem(trade.getIngredients().get(1));
@@ -186,14 +184,13 @@ public class VillagerShop {
 		}
 	}
 
-	private static boolean removeInventory(Inventory inventory, Material type, int nb) {
+	private static void removeInventory(Inventory inventory, ItemStack item, int nb) {
 		int nbMissing = nb;
 		for (ItemStack itemStack : inventory.getContents()) {
 			if (itemStack!=null) {
-				if (itemStack.getType()==type) {
+				if (itemStack.isSimilar(item)) {
 					if (itemStack.getAmount()>=nbMissing) {
 						itemStack.setAmount(itemStack.getAmount()-nb);
-						return true;
 					} else {
 						nbMissing-=itemStack.getAmount();
 						itemStack.setAmount(0);
@@ -201,7 +198,6 @@ public class VillagerShop {
 				}
 			}
 		}
-		return false;
 	}
 
 	public static void addTrade(Villager villager, ItemStack inputTrade, ItemStack inputTrade2, ItemStack outputTrade) {

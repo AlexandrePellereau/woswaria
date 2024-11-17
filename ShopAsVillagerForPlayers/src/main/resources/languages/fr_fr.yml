@@ -34,7 +34,7 @@ gui:
     items:
       previoustrade: Echange précédent
       nexttrade: Echange suivant
-      deletetrade: Supprimer l'échange
+      deletetrade: §cSupprimer l'échange
   inventorythingstosell:
     title: SAVFPGUI_InventoryThingsToSell
   inventorythingstobuy:

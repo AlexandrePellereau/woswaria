@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.dralexgon.shopasvillagerforplayers.database.SaveAndLoadSQLite;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager.Profession;
@@ -22,8 +20,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import fr.dralexgon.shopasvillagerforplayers.Main;
 import fr.dralexgon.shopasvillagerforplayers.VillagerShop;
-import org.checkerframework.checker.units.qual.C;
-
 
 public class ListenersGUI implements Listener {
 

@@ -132,7 +132,7 @@ public class Gui {
 					if (indexOfCurrentRecipe!=0) {
 						inventory.setItem(9*3+1,this.customHead(Main.getText("gui.deletetrade.items.previoustrade"),"MHF_ArrowLeft"));
 					}
-					inventory.setItem(9*3+4,this.customItem(Material.RED_CONCRETE, ChatColor.RED + Main.getText("gui.deletetrade.items.deletetrade")));
+					inventory.setItem(9*3+4,this.customItem(Material.RED_CONCRETE, Main.getText("gui.deletetrade.items.deletetrade")));
 					if (indexOfCurrentRecipe!=villagerShop.getVillager().getRecipeCount()-1) {
 						inventory.setItem(9*3+7,this.customHead(Main.getText("gui.deletetrade.items.nexttrade"),"MHF_ArrowRight"));
 					}

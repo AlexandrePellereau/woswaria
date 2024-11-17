@@ -9,7 +9,7 @@ villagershop:
 gui:
   arrow: --->
   mainmenu:
-    title: ShopAsVillagerForPlayers_MainMenu
+    title: SAVFPGUI_MainMenu
     items:
       addtrade: Add a trade
       renamevillagershop: Rename the VillagerShop
@@ -18,27 +18,27 @@ gui:
       storageitemsreceived: Storage of items received
       deletevillagershop: Delete the VillagerShop
   newtrade:
-    title: ShopAsVillagerForPlayers_NewTrade
+    title: SAVFPGUI_NewTrade
     items:
       toreceive1: Item1 to receive (Mandatory)
       toreceive2: Item2 to receive (Not mandatory)
       tosell1: Item to sell (Mandatory)
       submit: Submit
   confirmdelete:
-    title: ShopAsVillagerForPlayers_ConfirmDelete
+    title: SAVFPGUI_ConfirmDelete
     items:
       delete: Delete
       cancel: Cancel
   deletetrade:
-    title: ShopAsVillagerForPlayers_DeleteTrade
+    title: SAVFPGUI_DeleteTrade
     items:
       previoustrade: Previous trade
       nexttrade: Next trade
-      deletetrade: Delete trade
+      deletetrade: §cDelete trade
   inventorythingstosell:
-    title: ShopAsVillagerForPlayers_InventoryThingsToSell
+    title: SAVFPGUI_InventoryThingsToSell
   inventorythingstobuy:
-    title: ShopAsVillagerForPlayers_InventoryThingsToBuy
+    title: SAVFPGUI_InventoryThingsToBuy
 
 commands:
   giveskinvillagershop:
