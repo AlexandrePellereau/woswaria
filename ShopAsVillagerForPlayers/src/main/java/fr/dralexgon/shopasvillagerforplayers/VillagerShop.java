@@ -33,13 +33,6 @@ public class VillagerShop {
 		setDefaultValues(owner, name, villager, hasInfiniteTrade);
 	}
 
-	/*
-	public VillagerShop(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
-		//Only used for the save
-		setDefaultValues(owner, name, villager, hasInfiniteTrade);
-	}
-	*/
-
 	public void setDefaultValues(UUID owner, String name, Villager villager, boolean hasInfiniteTrade) {
 		this.owner = owner;
 		this.villager = villager;
@@ -62,15 +55,25 @@ public class VillagerShop {
 		this.owner = UUID.fromString(owner);
 		this.name = name;
 		this.hasInfiniteTrade = infinite_trade;
-		Chunk chunk = Bukkit.getWorld(UUID.fromString(world)).getChunkAt(x, z);
 
-		villager = (Villager)Bukkit.getEntity(UUID.fromString(uuid));
+		villager = (Villager)Bukkit.getEntity(UUID.fromString(uuid));//Work only if the entity is loaded (not sure)
+
 		if (villager == null) {
-			for(Entity entity : chunk.getEntities()) {
-				if (entity.getUniqueId().equals(uuid)) {
+			/*
+			boolean isLoaded = chunk.isLoaded();
+			if (!isLoaded)
+				chunk.load();
+			 */
+			Chunk chunk = Bukkit.getWorld(UUID.fromString(world)).getChunkAt(x, z);
+			for (Entity entity : chunk.getEntities()) {
+				if (entity.getUniqueId().equals(UUID.fromString(uuid))) {
 					villager = (Villager)entity;
 				}
 			}
+			/*
+			if (!isLoaded)
+				chunk.unload();
+			 */
 		}
 		if (villager == null) {
 			System.out.println("[ERROR] Villager not found !");
@@ -88,8 +91,8 @@ public class VillagerShop {
 		this.dead = false;
 		 */
 
-		this.setInventoryObtained(inventoryThingsObtained);
-		this.setInventoryToSell(inventoryThingsToSell);
+		this.setInventoryObtained(SaveAndLoadSQLite.loadInventory(uuid + "1"));
+		this.setInventoryToSell(SaveAndLoadSQLite.loadInventory(uuid + "2"));
 	}
 	
 	public boolean isDead() {

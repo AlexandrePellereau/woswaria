@@ -12,6 +12,7 @@ import java.util.Map;
 public class ItemStackSerializer {
     private static final Gson gson = new Gson();
 
+    /*
     public static String serialize(ItemStack item) {
         return gson.toJson(item.serialize());
     }
@@ -20,6 +21,7 @@ public class ItemStackSerializer {
         Map<String, Object> map = gson.fromJson(json, Map.class);
         return ItemStack.deserialize(map);
     }
+     */
 
     public static byte[] serializeBytes(ItemStack item) {
         ByteArrayOutputStream io = new ByteArrayOutputStream();

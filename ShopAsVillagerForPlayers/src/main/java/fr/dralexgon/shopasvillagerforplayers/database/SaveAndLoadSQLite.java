@@ -129,8 +129,7 @@ public class SaveAndLoadSQLite {
                     resultSet.getInt("z"),
                     resultSet.getBoolean("infinite_trade")
             );
-            villagerShop.setInventoryObtained(instance.loadInventory(villagerShop.getVillager().getUniqueId()+"1"));
-            villagerShop.setInventoryToSell(instance.loadInventory(villagerShop.getVillager().getUniqueId()+"2"));
+
             Main.getInstance().getListVillagersShop().add(villagerShop);
         }
     }
@@ -174,15 +173,21 @@ public class SaveAndLoadSQLite {
         }
     }
 
-    public Inventory loadInventory(String uuid) throws SQLException {
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM villager_shop_inventories WHERE uuid = ?");
-        preparedStatement.setString(1, uuid);
-        ResultSet resultSet = preparedStatement.executeQuery();
-        Inventory inventory = Bukkit.createInventory(null, 27, "VillagerShop");
-        while (resultSet.next()) {
-            inventory.addItem(ItemStackSerializer.deserializeBytes(resultSet.getBytes("item")));
+    public static Inventory loadInventory(String uuid) {
+        try {
+            PreparedStatement preparedStatement = instance.connection.prepareStatement("SELECT * FROM villager_shop_inventories WHERE uuid = ?");
+            preparedStatement.setString(1, uuid);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            Inventory inventory = Bukkit.createInventory(null, 27, "VillagerShop");
+            while (resultSet.next()) {
+                inventory.addItem(ItemStackSerializer.deserializeBytes(resultSet.getBytes("item")));
+            }
+            return inventory;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.log("Error when trying to load the inventory.");
+            return null;
         }
-        return inventory;
     }
 
     public void closeConnection() throws SQLException {
