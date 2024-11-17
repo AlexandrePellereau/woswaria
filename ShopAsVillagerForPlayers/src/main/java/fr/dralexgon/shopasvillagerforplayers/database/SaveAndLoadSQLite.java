@@ -83,6 +83,23 @@ public class SaveAndLoadSQLite {
         }
     }
 
+    public static void removeVillagerShop(VillagerShop villagerShop) {
+        try {
+            String uuid = villagerShop.getVillager().getUniqueId().toString();
+            PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop WHERE uuid = ?");
+            preparedStatement.setString(1, uuid);
+            preparedStatement.executeUpdate();
+            preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop_inventories WHERE uuid = ?");
+            preparedStatement.setString(1, uuid + "1");
+            preparedStatement.executeUpdate();
+            preparedStatement.setString(1, uuid + "2");
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Main.log("Error when trying to remove from the database.");
+        }
+    }
+
     public static boolean existsVillagerShop(String uuid) throws SQLException {
         PreparedStatement preparedStatement = instance.connection.prepareStatement("SELECT * FROM villager_shop WHERE uuid = ?");
         preparedStatement.setString(1, uuid);
@@ -194,13 +211,7 @@ public class SaveAndLoadSQLite {
         this.connection.close();
     }
 
-        /*
-    public static void removeVillagerShop(String uuid) throws SQLException {
-        PreparedStatement preparedStatement = instance.connection.prepareStatement("DELETE FROM villager_shop WHERE uuid = ?");
-        preparedStatement.setString(1, uuid);
-        preparedStatement.executeUpdate();
-    }
-
+    /*
     public static VillagerShop getVillagerShop(String uuid) throws SQLException {
         PreparedStatement preparedStatement = instance.connection.prepareStatement("SELECT * FROM villager_shop WHERE uuid = ?");
         preparedStatement.setString(1, uuid);

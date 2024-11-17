@@ -114,6 +114,7 @@ public class VillagerShop {
 	public void death() {
 		this.dead = true;
 		this.getVillager().setHealth(0);
+		SaveAndLoadSQLite.removeVillagerShop(this);
 	}
 	
 	public UUID getOwner() {
